@@ -77,7 +77,7 @@ function copyAllInstructions(){
  const fail=error=>kitFeedback("Unable to copy: "+error.message,true);
  try{
   if(navigator.clipboard?.writeText){
-   // Call clipboard.writeText directly within the click gesture; do not fetch or await first.
+   // Invoke clipboard immediately in the click callback to preserve user activation.
    navigator.clipboard.writeText(referenceKitText)
     .then(succeed)
     .catch(()=>{try{fallbackPlainTextCopy(referenceKitText);succeed()}catch(error){fail(error)}});
