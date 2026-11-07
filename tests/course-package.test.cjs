@@ -113,3 +113,13 @@ test("published three-file JSONL example is complete and directly importable",()
  assert.deepEqual(assembled.nodes.map(n=>n.id),canonical.nodes.map(n=>n.id));
  assert.equal(V.audit(assembled).ok,true);
 });
+
+test("oversized direct mastery fan-in is flagged as a curriculum-quality warning, never silently rejected",()=>{
+ const x=copy(canonical),mastery=x.nodes.find(n=>n.id==="mastery");
+ mastery.prerequisites=x.nodes.filter(n=>n.id!=="mastery").map(n=>n.id);
+ mastery.prerequisite_rationales=Object.fromEntries(mastery.prerequisites.map(id=>[id,"This distinct skill is considered in the final integrated exercise."]));
+ mastery.tier=Math.max(...x.nodes.filter(n=>n.id!=="mastery").map(n=>n.tier))+1;
+ const report=V.audit(x);
+ assert.ok(report.ok,JSON.stringify(report.errors));
+ assert.ok(report.warnings.some(w=>w.code==="mastery_fan_in"));
+});
