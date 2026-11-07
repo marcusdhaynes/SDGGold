@@ -184,7 +184,7 @@ localStorage.setItem(COURSE_STORE,JSON.stringify(c));save();$("search").value=""
 function options(){
 modal("Tree Options",body=>{
 body.append(mk("p",null,"Gold mastery requires five consecutive learning checkpoints. No descendant can unlock until EVERY required ancestor is gold."));
-body.append(btn("Import Course",importCourse),btn("Export Course",exportCourse,true),btn("Fit to Screen",()=>{closeModal();fitTree()},true));
+body.append(btn("Settings · Templates & Examples",()=>{closeModal();window.SDGReferenceSettings?.open()}),btn("Import Course",importCourse),btn("Export Course",exportCourse,true),btn("Fit to Screen",()=>{closeModal();fitTree()},true));
 body.append(btn("Reset All Progress",()=>{if(confirm("Clear all progress?")){progress={};save();refresh();closeModal()}},true));
 body.append(btn("Restore Sample Course",()=>{if(confirm("Restore sample course and demo progress?")){course=SAMPLE;progress={observation:5,questions:5,comparison:5,evidence:3,synthesis:2};saved=[];recent=[];localStorage.removeItem(COURSE_STORE);save();refresh();closeModal();fitTree()}},true));
 body.append(mk("p",null,"The gold progress shown in the original sample is demonstration data. This app currently stores progress locally; Google login and cloud sync are not yet active."));
@@ -212,7 +212,8 @@ document.querySelectorAll(".navbtn").forEach(b=>b.addEventListener("click",()=>n
 document.querySelectorAll(".sidebutton").forEach(b=>b.addEventListener("click",()=>setSection(b.dataset.section)));
 document.querySelectorAll(".checkline input").forEach(b=>b.addEventListener("change",renderGraph));
 ["search","subject","level","type"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",renderGraph));
-$("treeOptions").addEventListener("click",options);$("zoomOut").addEventListener("click",()=>setZoom(zoom-.1));$("zoomIn").addEventListener("click",()=>setZoom(zoom+.1));$("zoomFit").addEventListener("click",fitTree);
+$("treeOptions").addEventListener("click",options);
+$("settingsButton").addEventListener("click",()=>window.SDGReferenceSettings?.open());$("zoomOut").addEventListener("click",()=>setZoom(zoom-.1));$("zoomIn").addEventListener("click",()=>setZoom(zoom+.1));$("zoomFit").addEventListener("click",fitTree);
 $("account").addEventListener("click",()=>modal("Local Learning Profile",b=>b.append(mk("p",null,"Progress is stored in this browser. Google login is planned but not active."))));
 $("notifications").addEventListener("click",()=>modal("Notifications",b=>b.append(mk("p",null,"No new notifications. Your next milestone is shown in the progress footer."))));
 function sanitizeProgress(){
