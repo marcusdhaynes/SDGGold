@@ -116,7 +116,7 @@ async function save(){
  if(!session||!course||!report?.ok)return;
  const visibility=$("studio-visibility").value,quality=course.quality;
  if(visibility!=="private"){
-  if(course.coverage.status!=="complete"||course.sources.some(s=>s.rights==="unknown")){
+  if(course.coverage.status!=="complete"||course.sources.some(s=>!["original","licensed","public_domain"].includes(s.rights))){
    return message("Keep this course private until source coverage is complete and publication rights are established.",true);
   }
   if(!confirm("Share this course "+visibility+"? Confirm you have reviewed every cited source and have the rights to share its educational content."))return;
@@ -132,7 +132,7 @@ async function save(){
     expected=match.version;cloudId=match.id;
    }
   }
-  const result=await Cloud.save(course,visibility,expected);
+  const result=await Cloud.save(course,visibility,expected,visibility!=="private");
   cloudId=result.id;cloudVersion=result.version;cloudVisibility=visibility;editable=true;
   await persist();render();message("Saved successfully in SDGGold Supabase as version "+cloudVersion+". Previous revisions remain available.");
  }catch(e){
