@@ -253,4 +253,5 @@ window.SDGGoldAcceptCourse=function(candidate){
   refresh();requestAnimationFrame(fitTree);
 };
 validate(SAMPLE);sanitizeProgress();refresh();requestAnimationFrame(fitTree);
+if(new URLSearchParams(location.search).has("course"))requestAnimationFrame(()=>nav("studio"));
 if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(e=>console.warn("Offline installation unavailable",e)))}
