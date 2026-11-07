@@ -88,7 +88,7 @@
     if(navigator.clipboard&&typeof navigator.clipboard.writeText==="function"){
       return navigator.clipboard.writeText(value).catch(()=>fallbackCopy(value));
     }
-    return Promise.resolve().then(()=>fallbackCopy(value));
+    try{fallbackCopy(value);return Promise.resolve()}catch(error){return Promise.reject(error)}
   }
   function completeText(){
     return catalog.buildBundle(DOCS.map(doc=>({file:doc.file,text:loaded.get(doc.file)})));
