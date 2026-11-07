@@ -169,25 +169,22 @@ function closeModal(){$("modalLayer").classList.remove("open");$("modalLayer").s
 function exportCourse(){
 const blob=new Blob([JSON.stringify({...course,progress},null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=mk("a");a.href=url;a.download="SDGGold-course.json";document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);
 }
+// There is ONE supported course import entrypoint: Import Studio (sdggold-course-v2).
+// Previous versions opened a legacy raw-JSON form here that rejected valid v2 packages
+// because the title lives at course.title rather than title.
 function importCourse(){
-modal("Import Mastery Tree",body=>{
-body.append(mk("p",null,"Choose a JSON file or paste a course. Every concept must connect to one final mastery node. Current demo supports structured JSON imports; other document formats are not yet converted automatically."));
-const file=mk("input");file.type="file";file.accept=".json,application/json";file.setAttribute("aria-label","Import JSON file");
-const area=mk("textarea");area.placeholder="Paste SDGGold course JSON";const info=mk("p");info.setAttribute("role","status");
-file.addEventListener("change",async()=>{try{const f=file.files[0];if(!f)return;if(f.size>3000000)throw Error("File exceeds the 3 MB import limit.");area.value=await f.text()}catch(e){info.textContent=e.message}});
-body.append(file,area,btn("Validate & Import",()=>{try{
-const c=validate(JSON.parse(area.value));course=c;progress={};saved=[];recent=[];
-localStorage.setItem(COURSE_STORE,JSON.stringify(c));save();$("search").value="";section="all";refresh();closeModal();fitTree();
-}catch(e){info.textContent=e.message}}),btn("Show Example JSON",()=>{area.value=JSON.stringify({version:4,title:"My Course",nodes:[{id:"foundation",tier:0,title:"Foundation",prerequisites:[],learn:"Explain a simple idea.",reinforce:{question:"What did you learn?",answer:"The idea"},test:{question:"Which is correct?",choices:["Correct","Wrong"],correct:0}}]},null,2)},true),info);
-});
+  closeModal();
+  nav("studio");
+  // Focus the modern file chooser once its asynchronously loaded panel is mounted.
+  // The user can also paste a full JSON or import numbered JSONL batches there.
 }
 function options(){
 modal("Tree Options",body=>{
 body.append(mk("p",null,"Gold mastery requires five consecutive learning checkpoints. No descendant can unlock until EVERY required ancestor is gold."));
-body.append(btn("Settings · Templates & Examples",()=>{closeModal();window.SDGReferenceSettings?.open()}),btn("Import Course",importCourse),btn("Export Course",exportCourse,true),btn("Fit to Screen",()=>{closeModal();fitTree()},true));
+body.append(btn("Settings · Templates & Examples",()=>{closeModal();window.SDGReferenceSettings?.open()}),btn("Import / Update Course",importCourse),btn("Export Course",exportCourse,true),btn("Fit to Screen",()=>{closeModal();fitTree()},true));
 body.append(btn("Reset All Progress",()=>{if(confirm("Clear all progress?")){progress={};save();refresh();closeModal()}},true));
 body.append(btn("Restore Sample Course",()=>{if(confirm("Restore sample course and demo progress?")){course=SAMPLE;progress={observation:5,questions:5,comparison:5,evidence:3,synthesis:2};saved=[];recent=[];localStorage.removeItem(COURSE_STORE);save();refresh();closeModal();fitTree()}},true));
-body.append(mk("p",null,"The gold progress shown in the original sample is demonstration data. This app currently stores progress locally; Google login and cloud sync are not yet active."));
+body.append(mk("p",null,"Sample gold progress is demonstration data. Course import runs through Import Studio, which also supports Google sign-in and versioned Supabase course storage. Learning progress is stored locally."));
 });
 }
 function setSection(s){section=s;document.querySelectorAll(".sidebutton").forEach(b=>b.classList.toggle("active",b.dataset.section===s));renderGraph();if(s==="saved"&&!saved.length)modal("Saved Concepts",b=>b.append(mk("p",null,"Open a concept and click Save Concept to add it here.")))}
