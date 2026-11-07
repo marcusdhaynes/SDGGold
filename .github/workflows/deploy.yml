@@ -23,6 +23,10 @@ jobs:
           test -s index.html
           test -s styles.css
           test -s app.js
+          test -s course-package.js
+          test -s EXAMPLE_COMPLETE_COURSE.json
+          test -s CHATGPT_COURSE_TEMPLATE.md
+          test -s course-studio.js
           grep -q 'SDGGold' index.html
           grep -q 'styles.css' index.html
           grep -q 'app.js' index.html
@@ -37,8 +41,11 @@ jobs:
           PY
       - name: Check JavaScript syntax and progression invariants
         run: |
-          for file in app.js architect-core.js architect-store.js architect-import.js architect-pipeline.js architect-ui.js; do node --check "$file"; done
+          for file in app.js course-package.js architect-store.js course-cloud.js course-studio.js; do node --check "$file"; done
           node --test tests/*.test.cjs
+          grep -q 'sdggold-course-v2' course-package.js
+          ! grep -q 'architect-ui.js' index.html
+          ! grep -q 'architect-pipeline.js' index.html
   deploy:
     if: github.event_name != 'pull_request'
     needs: validate
