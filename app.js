@@ -103,7 +103,7 @@ function treeGuide(layout){
  toggle.type="button";toggle.title="Toggle all exact prerequisite links. Default groups final mastery prerequisites into track-readiness collectors.";
  toggle.setAttribute("aria-pressed",String(showAllConnections));
  toggle.addEventListener("click",()=>{showAllConnections=!showAllConnections;renderGraph()});
- const hint=mk("span","tree-scroll-hint","Scroll both ways · Hover nodes to trace links");
+ const hint=mk("span","tree-scroll-hint","Drag to pan · Scroll/pinch to zoom");
  panel.replaceChildren(counts,select,toggle,hint);
 }
 function renderGraph(){
@@ -284,11 +284,57 @@ if(view==="learn"||view==="practice"){const n=focus();if(n)open(n.id);else modal
 if(view==="review")modal("Review",b=>{const list=course.nodes.filter(n=>level(n.id)>0);if(!list.length)b.append(mk("p",null,"Begin learning to create a review list."));list.forEach(n=>b.append(btn(n.title+" · "+level(n.id)+"/5",()=>{closeModal();open(n.id)},true)))});
 if(view==="insights")modal("Insights",b=>{const mastered=course.nodes.filter(n=>level(n.id)===5).length;b.append(mk("p",null,mastered+" of "+course.nodes.length+" concepts mastered. Every node follows Learn → Recall → Practice → Test → Mastery Review."))});
 }
-function setZoom(value){
-const v=$("viewport"),old=zoom,cx=v.scrollLeft+v.clientWidth/2,cy=v.scrollTop+v.clientHeight/2;
-zoom=Math.max(.18,Math.min(1.6,Math.round(value*100)/100));renderGraph();v.scrollLeft=cx*zoom/old-v.clientWidth/2;v.scrollTop=cy*zoom/old-v.clientHeight/2;$("zoomValue").textContent=Math.round(zoom*100)+"%";
+// Zoom transforms the already-rendered graph without rebuilding hundreds of nodes.
+ // Wheel/pinch zoom stays anchored to the pointer; +/- buttons use viewport center.
+function setZoom(value,anchor){
+ const v=$("viewport"),graph=$("graph"),spacer=$("spacer"),G=window.SDGTreeGestures;
+ const next=G.clampZoom(value),before=zoom;
+ if(Math.abs(next-before)<.00001)return;
+ const rect=v.getBoundingClientRect();
+ const ax=Number.isFinite(anchor?.clientX)?anchor.clientX-rect.left:v.clientWidth/2;
+ const ay=Number.isFinite(anchor?.clientY)?anchor.clientY-rect.top:v.clientHeight/2;
+ const target=G.anchorZoom(before,next,v.scrollLeft,v.scrollTop,ax,ay);
+ zoom=next;
+ const width=parseFloat(graph.style.width)||positions().width;
+ const height=parseFloat(graph.style.height)||positions().height;
+ graph.style.transform="scale("+zoom+")";
+ spacer.style.width=Math.ceil(width*zoom)+"px";
+ spacer.style.height=Math.ceil(height*zoom)+"px";
+ v.scrollLeft=target.left;v.scrollTop=target.top;
+ $("zoomValue").textContent=Math.round(zoom*100)+"%";
 }
-function fitTree(){const d=positions(),v=$("viewport");setZoom(Math.max(.18,Math.min(1.15,Math.min(v.clientWidth/d.width,v.clientHeight/d.height))));v.scrollLeft=0;v.scrollTop=0}
+function fitTree(){
+ const d=positions(),v=$("viewport");
+ setZoom(Math.max(.18,Math.min(1.15,Math.min(v.clientWidth/d.width,v.clientHeight/d.height))));
+ v.scrollLeft=0;v.scrollTop=0;
+}
+const SIDEBAR_STATE_KEY="sdggold.sidebar.collapsed.v1";
+function setSidebarCollapsed(collapsed,persist=true){
+ const root=$("app"),toggle=$("sidebarToggle");
+ root.classList.toggle("sidebar-collapsed",!!collapsed);
+ toggle.setAttribute("aria-expanded",String(!collapsed));
+ toggle.setAttribute("aria-label",collapsed?"Expand sidebar":"Collapse sidebar");
+ toggle.title=collapsed?"Expand sidebar":"Collapse sidebar";
+ const arrow=toggle.querySelector("span");
+ if(arrow)arrow.textContent=collapsed?"›":"‹";
+ if(persist)try{localStorage.setItem(SIDEBAR_STATE_KEY,collapsed?"1":"0")}catch(e){console.warn("Sidebar preference not persisted",e)}
+}
+function initSidebar(){
+ let stored=null;
+ try{stored=localStorage.getItem(SIDEBAR_STATE_KEY)}catch{}
+ const defaultCollapsed=typeof matchMedia==="function"&&matchMedia("(max-width:650px)").matches;
+ setSidebarCollapsed(stored==="1"||(stored===null&&defaultCollapsed),false);
+ $("sidebarToggle").addEventListener("click",()=>setSidebarCollapsed(!$("app").classList.contains("sidebar-collapsed")));
+ document.querySelectorAll(".sidebar-compact-control").forEach(button=>button.addEventListener("click",()=>{
+   const target=button.dataset.expandControl;
+   setSidebarCollapsed(false);
+   requestAnimationFrame(()=>$(target)?.focus());
+ }));
+ document.querySelectorAll(".sidebutton").forEach(button=>{
+   const name=button.querySelector(".side-label")?.textContent.trim();
+   if(name){button.title=name;button.setAttribute("aria-label",name)}
+ });
+}
 $("closePanel").addEventListener("click",closePanel);$("panelLayer").addEventListener("click",e=>{if(e.target===$("panelLayer"))closePanel()});
 $("closeModal").addEventListener("click",closeModal);$("modalLayer").addEventListener("click",e=>{if(e.target===$("modalLayer"))closeModal()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closePanel()}});
@@ -297,6 +343,8 @@ document.querySelectorAll(".sidebutton").forEach(b=>b.addEventListener("click",(
 document.querySelectorAll(".checkline input").forEach(b=>b.addEventListener("change",renderGraph));
 ["search","subject","level","type"].forEach(id=>$(id).addEventListener(id==="search"?"input":"change",renderGraph));
 $("treeOptions").addEventListener("click",options);
+initSidebar();
+window.SDGTreeGestures.attach({viewport:$("viewport"),getZoom:()=>zoom,setZoom});
 $("settingsButton").addEventListener("click",()=>window.SDGReferenceSettings?.open());$("zoomOut").addEventListener("click",()=>setZoom(zoom-.1));$("zoomIn").addEventListener("click",()=>setZoom(zoom+.1));$("zoomFit").addEventListener("click",fitTree);
 $("account").addEventListener("click",()=>modal("Local Learning Profile",b=>b.append(mk("p",null,"Progress is stored in this browser. Google login is planned but not active."))));
 $("notifications").addEventListener("click",()=>modal("Notifications",b=>b.append(mk("p",null,"No new notifications. Your next milestone is shown in the progress footer."))));
