@@ -106,6 +106,12 @@ async function generate(){
   if(!s)throw Error("Google sign-in is required for AI processing. You can import preprocessed JSONL and build a clearly labeled local draft without it.");
   const passages=await S.listPassages(job.id),assets=await S.listAssets(job.id);
   if(!passages.length&&!job.packet.concepts.length&&!assets.length)throw Error("First import readable course material.");
+  const unexplained=passages.filter(p=>!job.packet.concepts.some(c=>(c.source_chunks||[]).includes(p.chunk_id))).length;
+  const minimum=unexplained+assets.length+Math.ceil(Math.max(1,job.packet.concepts.length)/28)+Math.ceil(Math.max(1,job.packet.concepts.length)/2);
+  if(!confirm("Send selected source excerpts and queued images to the configured AI provider? This may incur API charges. "+
+   "The current project has "+passages.length+" text passages, "+assets.length+" images, and "+job.packet.concepts.length+" preprocessed concept candidates. "+
+   "Estimated MINIMUM AI calls at current size: "+minimum+" (the final count may be much higher as new concepts are extracted). "+
+   "You may pause between calls; progress remains local. Continue?"))return;
   working=true;pausing=false;await P.save(job);$("arch-pause").disabled=false;await render();
   await P.aiRun(job,{invoke},()=>render(),()=>pausing);
   if(job.phase==="ready")status("AI curriculum generated. Examine the quality report, review questionable paths, then install it in your learning tree.");
