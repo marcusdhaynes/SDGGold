@@ -38,7 +38,7 @@ async function request(action,params={},body=null,needsAuth=false){
  for(const [k,v] of Object.entries(params))if(v!==undefined&&v!==null)u.searchParams.set(k,String(v));
  let token;
  if(needsAuth){const s=await session();token=s?.access_token;if(!token)throw Error("Sign in with Google first.")}
- else try{token=(await session())?.access_token}catch{}
+ else if(client)try{token=(await session())?.access_token}catch{}
  const opts={method:body==null?"GET":"POST",headers:{"apikey":PUB,"Accept":"application/json"}};
  if(token)opts.headers.Authorization="Bearer "+token;
  if(body!=null){opts.headers["Content-Type"]="application/json";opts.body=JSON.stringify(body)}
