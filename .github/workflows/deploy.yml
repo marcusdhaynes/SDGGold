@@ -1,0 +1,66 @@
+name: SDGGold · Validate and Deploy
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency:
+  group: pages
+  cancel-in-progress: true
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check published app contract
+        shell: bash
+        run: |
+          test -s index.html
+          grep -q 'SDGGold' index.html
+          grep -q 'prerequisites' index.html
+          grep -q 'validate(data)' index.html
+          grep -q 'reinforce' index.html
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          class Parser(HTMLParser): pass
+          Parser().feed(open("index.html", encoding="utf-8").read())
+          print("HTML parsed")
+          PY
+      - name: Check embedded JavaScript syntax
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          class Script(HTMLParser):
+              inside=False
+              parts=[]
+              def handle_starttag(self,tag,attrs):
+                  if tag=="script": self.inside=True
+              def handle_endtag(self,tag):
+                  if tag=="script": self.inside=False
+              def handle_data(self,data):
+                  if self.inside: self.parts.append(data)
+          p=Script();p.feed(open("index.html",encoding="utf-8").read())
+          open("/tmp/sdggold-app.js","w",encoding="utf-8").write("\n".join(p.parts))
+          PY
+          node --check /tmp/sdggold-app.js
+  deploy:
+    if: github.event_name != 'pull_request'
+    needs: validate
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
