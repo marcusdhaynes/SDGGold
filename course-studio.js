@@ -4,6 +4,7 @@
 const V=root.SDGCoursePackage,S=root.SDGArchitectStore,Cloud=root.SDGCourseCloud;
 const $=id=>document.getElementById(id),elt=(tag,value,cls)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(value!==undefined)e.textContent=String(value);return e};
 let initialized=false,screen=null,parts=[],course=null,report=null,cloudId=null,cloudVersion=null,cloudVisibility="private",editable=false,session=null,collectionScope="public",collectionOffset=0,busy=false,sharedOpened=false;
+let referenceKitText=null,referenceKitLoading=null;
 const MAX_FILE=25000000;
 const text=(id,value)=>{const e=$(id);if(e)e.textContent=String(value??"")};
 function message(value,isError=false){text("studio-message",value);$("studio-message")?.classList.toggle("error",isError)}
@@ -24,6 +25,64 @@ function downloadable(name,contents,mime="application/json"){
 async function fetchDownload(file,name,mime){
  const r=await fetch("./"+file,{cache:"no-cache"});if(!r.ok)throw Error(file+" is unavailable.");
  downloadable(name,await r.text(),mime);
+}
+function kitFeedback(value,isError=false){
+ const node=$("studio-copy-feedback");
+ if(node){node.textContent=value;node.dataset.error=String(isError)}
+}
+async function prepareReferenceKit(){
+ if(referenceKitText)return referenceKitText;
+ if(referenceKitLoading)return referenceKitLoading;
+ referenceKitLoading=(async()=>{
+  const files=["CHATGPT_COURSE_TEMPLATE.md","EXAMPLE_COMPLETE_COURSE.json"];
+  const originals=await Promise.all(files.map(async file=>{
+   const response=await fetch("./"+file,{cache:"default"});
+   if(!response.ok)throw Error("Could not load "+file+" (HTTP "+response.status+").");
+   return response.text();
+  }));
+  const example=JSON.parse(originals[1]),audit=V.audit(example);
+  if(!audit.ok)throw Error("The canonical example failed validation ("+audit.errors.length+" structural errors).");
+  const kit=root.SDGStudioCopyKit.create(originals[0],originals[1],audit);
+  if(!kit.passed||!kit.text)throw Error("The three-part copy bundle is not valid.");
+  referenceKitText=kit.text;
+  const button=$("studio-copy-all");
+  if(button){button.disabled=false;button.title="Copy template, complete example, and validation report as plain text";}
+  return referenceKitText;
+ })().catch(error=>{
+  referenceKitLoading=null;
+  kitFeedback("Copy All unavailable: "+error.message,true);
+  throw error;
+ });
+ return referenceKitLoading;
+}
+function fallbackPlainTextCopy(value){
+ const field=document.createElement("textarea");
+ field.value=value;field.setAttribute("readonly","");
+ field.style.cssText="position:fixed;left:0;top:0;width:1px;height:1px;opacity:0";
+ document.body.append(field);
+ field.focus();field.select();
+ let copied=false;
+ try{copied=typeof document.execCommand==="function"&&document.execCommand("copy");}
+ finally{field.remove();}
+ if(!copied)throw Error("Clipboard access was blocked. Please allow clipboard permission or use Settings → Templates & Examples.");
+}
+function copyAllInstructions(){
+ if(!referenceKitText){
+  kitFeedback("The template and example are still loading. Try again once Copy All is enabled.",true);
+  return;
+ }
+ const succeed=()=>{
+  kitFeedback("Copied all three as plain text: master template, complete course example, and validation report. ("+referenceKitText.length.toLocaleString()+" characters)");
+ };
+ const fail=error=>kitFeedback("Unable to copy: "+error.message,true);
+ try{
+  if(navigator.clipboard?.writeText){
+   // Call clipboard.writeText directly within the click gesture; do not fetch or await first.
+   navigator.clipboard.writeText(referenceKitText)
+    .then(succeed)
+    .catch(()=>{try{fallbackPlainTextCopy(referenceKitText);succeed()}catch(error){fail(error)}});
+  }else{fallbackPlainTextCopy(referenceKitText);succeed();}
+ }catch(error){fail(error)}
 }
 async function importedText(raw,name){
  if(String(raw).length>MAX_FILE)throw Error(name+" is larger than 25 MB. Split into smaller JSONL batches.");
@@ -216,6 +275,7 @@ function bind(){
  $("studio-template").onclick=()=>fetchDownload("CHATGPT_COURSE_TEMPLATE.md","SDGGold_Master_External_ChatGPT_Template.md","text/markdown").catch(e=>message(e.message,true));
  $("studio-example").onclick=()=>fetchDownload("EXAMPLE_COMPLETE_COURSE.json","SDGGold_Complete_Working_Example.json").catch(e=>message(e.message,true));
  $("studio-example-preview").onclick=importExample;
+ $("studio-copy-all").onclick=copyAllInstructions;
  $("studio-files").onchange=e=>{const chosen=[...e.target.files];e.target.value="";void importFiles(chosen)};
  const drop=$("studio-drop");
  for(const event of ["dragenter","dragover"])drop.addEventListener(event,e=>{e.preventDefault();drop.classList.add("dragging")});
@@ -236,7 +296,7 @@ async function init(){
  screen=document.createElement("section");screen.id="studio-screen";screen.className="architect-screen";
  const r=await fetch("./architect-panel.html");if(!r.ok)throw Error("Import Studio interface missing.");
  screen.innerHTML=await r.text();document.querySelector(".stage").append(screen);
- bind();await restore();render();authCheck();
+ bind();void prepareReferenceKit().catch(()=>{});await restore();render();authCheck();
 }
 async function open(){
  try{await init();document.querySelector(".stage").classList.add("architect-mode");render();
