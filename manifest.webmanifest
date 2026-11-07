@@ -1,0 +1,19 @@
+{
+  "name": "SDGGold — Student Development Guide Gold",
+  "short_name": "SDGGold",
+  "description": "Explore a connected mastery tree and learn every foundation.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "theme_color": "#102b3d",
+  "background_color": "#0b2534",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
