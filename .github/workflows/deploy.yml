@@ -43,6 +43,9 @@ jobs:
         run: |
           for file in app.js course-package.js architect-store.js course-cloud.js course-studio.js; do node --check "$file"; done
           node --test tests/*.test.cjs
+          node tools/validate-course.cjs EXAMPLE_COMPLETE_COURSE.json
+          node tools/validate-course.cjs EXAMPLE_BATCH_B001.jsonl EXAMPLE_BATCH_B002.jsonl EXAMPLE_BATCH_B003.jsonl
+          node -e "JSON.parse(require('fs').readFileSync('COURSE_PACKAGE_SCHEMA.json','utf8'))"
           grep -q 'sdggold-course-v2' course-package.js
           ! grep -q 'architect-ui.js' index.html
           ! grep -q 'architect-pipeline.js' index.html
