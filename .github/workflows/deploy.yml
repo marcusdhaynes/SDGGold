@@ -37,7 +37,7 @@ jobs:
           PY
       - name: Check JavaScript syntax and progression invariants
         run: |
-          node --check app.js
+          for file in app.js architect-core.js architect-store.js architect-import.js architect-pipeline.js architect-ui.js; do node --check "$file"; done
           node --test tests/*.test.cjs
   deploy:
     if: github.event_name != 'pull_request'
