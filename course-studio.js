@@ -110,7 +110,7 @@ async function logout(){try{await Cloud.signOut();session=null;render()}catch(e)
 async function use(){
  if(!course||!report?.ok)return;
  if(!confirm("Load "+course.course.title+" into the learning tree? Changes to an existing course may reset progress for revised concepts. This action does not automatically publish anything."))return;
- try{root.SDGGoldAcceptCourse(course);close();document.querySelector('[data-view="progression"]')?.click();message("Course loaded locally. All concepts, links and mastery checks remain authored by external ChatGPT.")}
+ try{await root.SDGGoldAcceptCourse(course);close();document.querySelector('[data-view="progression"]')?.click();message("Course loaded locally. All concepts, links and mastery checks remain authored by external ChatGPT.")}
  catch(e){message("Cannot load course: "+e.message,true)}
 }
 async function save(){
