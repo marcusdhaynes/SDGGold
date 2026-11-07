@@ -169,3 +169,37 @@ html,body{height:100%;overflow:hidden}
  .sidebar .sideheading{margin:6px 9px}
 }
 @media(prefers-reduced-motion:reduce){.workspace{transition:none}}
+
+/* Only the Fit control remains. Keep it tucked into the map corner on every screen. */
+.canvas-view .zoomtools{
+  top:7px!important;
+  right:7px!important;
+  z-index:7;
+  gap:0;
+  padding:0;
+}
+.canvas-view .zoomtools .fitbtn{
+  display:grid;
+  place-items:center;
+  box-sizing:border-box;
+  width:28px;
+  height:28px;
+  min-width:28px;
+  min-height:28px;
+  margin:0!important;
+  padding:0!important;
+  border:1px solid #b79967;
+  border-radius:8px;
+  background:#f5ebd9e6;
+  color:#283846;
+  box-shadow:0 1px 5px #2b200c35;
+  font:600 16px/1 Inter,system-ui,sans-serif;
+}
+.canvas-view .zoomtools .fitbtn:hover{background:#fff9eb;border-color:#9e783c}
+@media(max-width:650px){
+  .canvas-view .zoomtools{top:5px!important;right:5px!important}
+  .canvas-view .zoomtools .fitbtn{
+    width:26px;height:26px;min-width:26px;min-height:26px;
+    font-size:15px;
+  }
+}
