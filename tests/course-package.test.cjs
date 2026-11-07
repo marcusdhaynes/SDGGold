@@ -105,3 +105,11 @@ test("stress: 1000-node hierarchical chain remains structurally valid",()=>{
  x.nodes=[...nodes,mastery];x.tracks=x.tracks.filter(t=>t.id==="observe");mastery.track_ids=["observe"];const r=V.audit(x);
  assert.ok(r.ok,JSON.stringify(r.errors.slice(0,4)));assert.equal(r.metrics.nodes,1000);
 });
+
+test("published three-file JSONL example is complete and directly importable",()=>{
+ const fs=require("node:fs");
+ const files=[1,2,3].map(i=>({name:"EXAMPLE_BATCH_B00"+i+".jsonl",content:fs.readFileSync("EXAMPLE_BATCH_B00"+i+".jsonl","utf8")}));
+ const assembled=V.assembleParts(files);
+ assert.deepEqual(assembled.nodes.map(n=>n.id),canonical.nodes.map(n=>n.id));
+ assert.equal(V.audit(assembled).ok,true);
+});
