@@ -111,6 +111,13 @@ function audit(p){
  const final=nodes.get(c?.mastery_node_id);
  if(!final||final.kind!=="milestone")err("mastery_kind","Final mastery node must be a milestone.");
  if(final&&new Set(final.outcome_ids||[]).size!==outcomes.size)warn("mastery_outcomes","Final mastery does not explicitly assess all declared course outcomes.");
+ if(final&&tracks.size>1&&final.prerequisites?.length>8)
+  warn("mastery_fan_in","Final mastery directly requires "+final.prerequisites.length+" concepts across "+tracks.size+" tracks. This is valid but produces a flat, difficult-to-understand convergence. Consider fully authored, authentic track-synthesis milestones with all five phases; never delete real requirements.");
+ const genericRationales=p.nodes.flatMap(n=>Object.values(n.prerequisite_rationales||{}))
+  .filter(value=>typeof value==="string"&&/^understanding .+ provides the required foundation for .+\.?$/i.test(value.trim())).length;
+ if(genericRationales>=5)
+  warn("boilerplate_rationales",genericRationales+" prerequisite explanations use generic 'Understanding X provides the required foundation for Y' wording. Have external ChatGPT justify the particular knowledge transfer behind every link.");
+
  const visited=new Set();
  function ancestor(id){if(visited.has(id))return;visited.add(id);for(const p of nodes.get(id)?.prerequisites||[])if(nodes.has(p))ancestor(p)}
  if(final)ancestor(final.id);
