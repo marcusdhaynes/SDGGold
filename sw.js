@@ -1,4 +1,4 @@
-const CACHE="sdggold-ui-v6";
+const CACHE="sdggold-ui-v7";
 const ASSETS=[
   "./","./index.html","./styles.css","./graph-tracks.css","./graph-layout.js","./layout-controls.css","./tree-gestures.js","./architect.css","./settings.css",
   "./app.js","./course-package.js","./architect-store.js","./course-cloud.js","./course-studio.js",
