@@ -221,3 +221,4 @@ function sanitizeProgress(){
   if(previous!==JSON.stringify(progress))save();
 }
 validate(SAMPLE);sanitizeProgress();refresh();requestAnimationFrame(fitTree);
+if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(e=>console.warn("Offline installation unavailable",e)))}
