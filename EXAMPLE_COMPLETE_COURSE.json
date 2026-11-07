@@ -1,0 +1,781 @@
+{
+  "schema": "sdggold-course-v2",
+  "course": {
+    "course_id": "understanding-fair-investigations",
+    "title": "Understanding Fair Investigations",
+    "subtitle": "From everyday observations to reliable explanations",
+    "description": "An original miniature example of a fully authored SDGGold mastery course.",
+    "revision": 1,
+    "language": "en",
+    "mastery_node_id": "mastery",
+    "outcomes": [
+      {
+        "id": "o-observe",
+        "title": "Observe and question",
+        "description": "Distinguish directly observed information from assumptions and formulate investigable questions."
+      },
+      {
+        "id": "o-test",
+        "title": "Test fairly",
+        "description": "Make predictions, compare conditions, measure, and record the results of fair tests."
+      },
+      {
+        "id": "o-explain",
+        "title": "Explain using evidence",
+        "description": "Build limited, evidence-based explanations and transfer the method to unfamiliar situations."
+      }
+    ]
+  },
+  "tracks": [
+    {
+      "id": "observe",
+      "title": "Observe and Measure",
+      "purpose": "Establish reliable descriptions and quantitative comparisons.",
+      "distinctness": "Observation and measurement need direct contact with phenomena and have distinct skills from asking explanatory questions."
+    },
+    {
+      "id": "inquire",
+      "title": "Question and Predict",
+      "purpose": "Formulate testable questions and predictions.",
+      "distinctness": "Inquiry involves specifying questions and anticipated outcomes, which differs from direct measurement."
+    },
+    {
+      "id": "integrate",
+      "title": "Evidence and Explanation",
+      "purpose": "Integrate observations and investigations into defensible explanations.",
+      "distinctness": "Integrative reasoning needs both investigative and observational strands; it is not merely another chapter."
+    }
+  ],
+  "sources": [
+    {
+      "id": "example-source",
+      "title": "SDGGold Original Example: Fair Investigations",
+      "type": "original",
+      "creator": "SDGGold original instructional example",
+      "rights": "original",
+      "locator_description": "Original sections O, Q, C, P, M, T, R, E, X and Z; all text embedded in this example package."
+    }
+  ],
+  "coverage": {
+    "status": "complete",
+    "source_ledger": [
+      {
+        "source_id": "example-source",
+        "processed_locators": [
+          "Section O",
+          "Section Q",
+          "Section C",
+          "Section P",
+          "Section M",
+          "Section T",
+          "Section R",
+          "Section E",
+          "Section X",
+          "Section Z"
+        ],
+        "missing_locators": []
+      }
+    ],
+    "notes": "Complete with respect to this intentionally self-contained original example. No external textbook claims are made."
+  },
+  "quality": {
+    "self_checked": true,
+    "checklist": [
+      {
+        "id": "source_inventory",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "source_coverage",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "atomic_concepts",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "foundation_accuracy",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "tracks_minimal",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "necessary_prerequisites",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "splits_and_merges",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "single_mastery",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "five_phases",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "assessment_answers",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "no_hallucinated_sources",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      },
+      {
+        "id": "uncertainties_reported",
+        "passed": true,
+        "notes": "Checked against this original example's text, goals and graph."
+      }
+    ],
+    "open_questions": [],
+    "notes": "This is a deliberately small original teaching example. External courses require independent source review."
+  },
+  "nodes": [
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [],
+      "prerequisite_rationales": {},
+      "uncertainty": "none",
+      "id": "observe",
+      "title": "Notice What Is Really There",
+      "tier": 0,
+      "lane": 2.1,
+      "track_ids": [
+        "observe"
+      ],
+      "learn": "Observation means carefully noticing what is happening before deciding why it happens. You might look, listen, count, or use a tool. An observation tells what you detected, not what you imagine caused it. This is the first building block of trustworthy learning.",
+      "example": "A chalk mark shows a puddle reached a certain edge at 9 a.m. At noon, the puddle no longer reaches the mark.",
+      "reinforce": {
+        "question": "Explain the difference between noticing a smaller puddle and guessing why it shrank.",
+        "answer": "The smaller puddle is an observation we can check; the cause of the shrinking is still a guess until investigated."
+      },
+      "practice": {
+        "question": "Which statement reports an observation rather than a cause?",
+        "choices": [
+          "The puddle stops before the chalk line at noon.",
+          "The sun must have evaporated the puddle.",
+          "The puddle wanted to disappear."
+        ],
+        "correct": 0,
+        "explanation": "The chalk-line distance is directly observable."
+      },
+      "test": {
+        "question": "Two classmates disagree about whether a puddle shrank. What would best settle the observation?",
+        "choices": [
+          "Vote on whose explanation sounds better.",
+          "Compare marked edges or measurements from the same times.",
+          "Assume a hot day always means a smaller puddle."
+        ],
+        "correct": 1,
+        "explanation": "Consistent measurements are better evidence of what was observed."
+      },
+      "review": {
+        "question": "A toy car seems faster today. What should the observer do first?",
+        "choices": [
+          "Conclude that the motor became stronger.",
+          "Ask which car is everyone's favorite.",
+          "Measure how far it travels over the same time interval."
+        ],
+        "correct": 2,
+        "explanation": "First establish the change with a repeatable observation."
+      },
+      "outcome_ids": [
+        "o-observe"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section O"
+        }
+      ]
+    },
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [],
+      "prerequisite_rationales": {},
+      "uncertainty": "none",
+      "id": "ask",
+      "title": "Ask an Investigable Question",
+      "tier": 0,
+      "lane": 4.3,
+      "track_ids": [
+        "inquire"
+      ],
+      "learn": "A useful question identifies something you want to understand and makes it possible to look for an answer. Instead of guessing a story about a puddle, ask what affects how quickly its water disappears. Clear questions make the next steps meaningful.",
+      "example": "Ask whether equal puddles shrink at different speeds in sunny and shaded places.",
+      "reinforce": {
+        "question": "What makes a question investigable?",
+        "answer": "It names a phenomenon and can be explored through observations, comparisons, or tests."
+      },
+      "practice": {
+        "question": "Which question can be explored by a simple comparison?",
+        "choices": [
+          "Does sunlight change how quickly shallow water disappears?",
+          "Does the puddle secretly dislike sidewalks?",
+          "Which shade of blue is the happiest?"
+        ],
+        "correct": 0,
+        "explanation": "The sunlight question can be checked using observations."
+      },
+      "test": {
+        "question": "A student asks, 'Why is water mysterious?' How could that question improve?",
+        "choices": [
+          "Replace it with an even broader question.",
+          "Ask whether warmer water disappears faster under the same conditions.",
+          "Ask which explanation sounds magical."
+        ],
+        "correct": 1,
+        "explanation": "A narrow measurable question guides investigation."
+      },
+      "review": {
+        "question": "You notice two plants have different heights. Which question best starts an investigation?",
+        "choices": [
+          "Which plant has the nicer personality?",
+          "Can I know the cause by choosing my favorite?",
+          "Does differing light exposure affect growth when other conditions are similar?"
+        ],
+        "correct": 2,
+        "explanation": "The proposed question permits systematic comparison."
+      },
+      "outcome_ids": [
+        "o-observe"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section Q"
+        }
+      ]
+    },
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [
+        "observe"
+      ],
+      "prerequisite_rationales": {
+        "observe": "You must identify observable features before you can compare them."
+      },
+      "uncertainty": "none",
+      "id": "compare",
+      "title": "Make a Meaningful Comparison",
+      "tier": 1,
+      "lane": 2.1,
+      "track_ids": [
+        "observe"
+      ],
+      "learn": "Comparison means looking at the same kind of feature across two or more cases. To compare puddle size, use the same unit or method for each puddle. Comparing one puddle's depth to another puddle's color would not answer a question about size.",
+      "example": "Two same-size trays begin with equal amounts of water. Observe the remaining amount later.",
+      "reinforce": {
+        "question": "Why should a comparison use the same measurement method for both cases?",
+        "answer": "Different methods can create a false difference, while consistent methods make results meaningful."
+      },
+      "practice": {
+        "question": "Which pair can be compared fairly for water loss?",
+        "choices": [
+          "Remaining water volume in two measured trays.",
+          "The color of one tray and the temperature of another.",
+          "The size of one tray and the owner's favorite season."
+        ],
+        "correct": 0,
+        "explanation": "Both trays share the same measurable property."
+      },
+      "test": {
+        "question": "One child records milliliters and another records centimeters. What should they do?",
+        "choices": [
+          "Average all numbers without considering their units.",
+          "Convert to one meaningful common quantity or measurement method.",
+          "Choose whichever number is larger."
+        ],
+        "correct": 1,
+        "explanation": "Measurements must refer to compatible quantities."
+      },
+      "review": {
+        "question": "When two students time falling objects, which design improves comparison?",
+        "choices": [
+          "Use different heights and no timer.",
+          "Change every condition between trials.",
+          "Use the same height and timing method."
+        ],
+        "correct": 2,
+        "explanation": "Holding relevant conditions comparable reduces ambiguity."
+      },
+      "outcome_ids": [
+        "o-observe",
+        "o-test"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section C"
+        }
+      ]
+    },
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [
+        "ask"
+      ],
+      "prerequisite_rationales": {
+        "ask": "A testable prediction needs a clear question about a possible outcome."
+      },
+      "uncertainty": "none",
+      "id": "predict",
+      "title": "Make a Testable Prediction",
+      "tier": 1,
+      "lane": 4.3,
+      "track_ids": [
+        "inquire"
+      ],
+      "learn": "A prediction describes what you think will happen before you test it. You must be able to recognize whether it happened. Predictions are not promises and may be wrong; finding out that they were wrong can still teach you something important.",
+      "example": "Predict that water in sunlight will shrink faster than water in shade.",
+      "reinforce": {
+        "question": "Is a prediction the same as a proven fact?",
+        "answer": "No. It is a checkable expectation that must be compared with observations."
+      },
+      "practice": {
+        "question": "Which is a testable prediction?",
+        "choices": [
+          "Water in sunlight will lose more volume after an hour than equal water in shade.",
+          "Every puddle is secretly alive.",
+          "Sunlight is my favorite weather."
+        ],
+        "correct": 0,
+        "explanation": "The prediction names a measurable outcome."
+      },
+      "test": {
+        "question": "A child predicts that shade will dry faster. The opposite happens. What follows?",
+        "choices": [
+          "The observations must be hidden.",
+          "The prediction was not supported by this test.",
+          "Predictions cannot ever be wrong."
+        ],
+        "correct": 1,
+        "explanation": "A failed prediction helps improve understanding."
+      },
+      "review": {
+        "question": "Before a seed experiment, which statement is most useful?",
+        "choices": [
+          "Seeds will choose to become famous.",
+          "The largest seed is automatically the winner.",
+          "Seeds receiving equal water but more light will grow taller over one week."
+        ],
+        "correct": 2,
+        "explanation": "The first statement can be compared with measured growth."
+      },
+      "outcome_ids": [
+        "o-test"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section P"
+        }
+      ]
+    },
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [
+        "compare"
+      ],
+      "prerequisite_rationales": {
+        "compare": "Measurements matter because the learner needs comparable quantities rather than impressions."
+      },
+      "uncertainty": "none",
+      "id": "measure",
+      "title": "Measure Rather Than Guess",
+      "tier": 2,
+      "lane": 2.1,
+      "track_ids": [
+        "observe"
+      ],
+      "learn": "A measurement attaches a number and unit to an observation. Choose a suitable tool and use it consistently. Recording 50 mL tells more than saying 'there was plenty' because another learner can repeat or check the measurement.",
+      "example": "Measure each tray's water as 100 mL at the start and 70 mL or 85 mL afterward.",
+      "reinforce": {
+        "question": "Why are units essential when measuring?",
+        "answer": "A number without a unit may not identify what quantity was measured or allow fair comparisons."
+      },
+      "practice": {
+        "question": "Which entry is a useful volume measurement?",
+        "choices": [
+          "70 milliliters of water remain.",
+          "The tray looks a little sad.",
+          "The puddle is medium-ish."
+        ],
+        "correct": 0,
+        "explanation": "A numeric amount with a unit can be compared."
+      },
+      "test": {
+        "question": "One tray begins with 100 mL and ends with 70 mL. How much was lost?",
+        "choices": [
+          "170 mL",
+          "30 mL",
+          "70 mL"
+        ],
+        "correct": 1,
+        "explanation": "Subtract final from initial: 100 − 70 = 30 mL."
+      },
+      "review": {
+        "question": "Two trials give 30 mL and 31 mL lost. Which record is best?",
+        "choices": [
+          "Write only the result you liked.",
+          "Write an average without any units or context.",
+          "Keep both results, units, and trial conditions."
+        ],
+        "correct": 2,
+        "explanation": "Retaining measurement details supports checking."
+      },
+      "outcome_ids": [
+        "o-test"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section M"
+        }
+      ]
+    },
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [
+        "measure",
+        "predict"
+      ],
+      "prerequisite_rationales": {
+        "measure": "Fair tests require comparable quantities and recorded measurements.",
+        "predict": "A testable prediction gives the investigation an expected outcome to check."
+      },
+      "uncertainty": "none",
+      "id": "test",
+      "title": "Design a Fair Test",
+      "tier": 3,
+      "lane": 3.4,
+      "track_ids": [
+        "observe",
+        "inquire"
+      ],
+      "learn": "A fair test changes one important condition while keeping other relevant conditions as similar as possible. For the water investigation, change sunlight exposure but begin with equal water, matching trays, and the same amount of time. Then measure the outcome.",
+      "example": "Place equal trays outside for one hour, one in sun and one in shade, then measure remaining water.",
+      "reinforce": {
+        "question": "Why change only one important condition in a simple fair test?",
+        "answer": "It makes the effect of that condition easier to distinguish from other possible causes."
+      },
+      "practice": {
+        "question": "Which is the fairest simple test of sunlight's influence on drying?",
+        "choices": [
+          "Use equal trays and water volumes, and change only sunlight exposure.",
+          "Use unequal trays at different times with no measurements.",
+          "Use one tray and assume what would happen elsewhere."
+        ],
+        "correct": 0,
+        "explanation": "The first setup controls the most obvious competing differences."
+      },
+      "test": {
+        "question": "One tray holds twice as much water at the start. Why is this a problem?",
+        "choices": [
+          "Starting amount never matters in a fair test.",
+          "The beginning difference makes the amount lost harder to attribute to sunlight alone.",
+          "The larger tray proves the prediction correct."
+        ],
+        "correct": 1,
+        "explanation": "An uncontrolled starting amount is an alternative explanation."
+      },
+      "review": {
+        "question": "You want to compare cooling speeds of two identical cups. What is a good fair-test choice?",
+        "choices": [
+          "Use a hot large cup against a cool small cup.",
+          "Change every condition at once.",
+          "Keep cup size and start temperature the same while changing location."
+        ],
+        "correct": 2,
+        "explanation": "Control major competing factors to isolate the tested difference."
+      },
+      "outcome_ids": [
+        "o-test"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section T"
+        }
+      ]
+    },
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [
+        "measure"
+      ],
+      "prerequisite_rationales": {
+        "measure": "Recording requires knowing which measured quantities and units must be captured."
+      },
+      "uncertainty": "none",
+      "id": "record",
+      "title": "Record Every Result",
+      "tier": 3,
+      "lane": 1.5,
+      "track_ids": [
+        "observe"
+      ],
+      "learn": "Write the actual results of each trial, even when they do not match your expectation. Include times, conditions and units. A small table can prevent memory errors and lets another person examine what happened.",
+      "example": "Write 'sun: 70 mL, shade: 85 mL after one hour' in a table rather than remembering only which tray seemed lower.",
+      "reinforce": {
+        "question": "Should you delete a result because it contradicts your prediction?",
+        "answer": "No. Record observed results faithfully and investigate differences or possible mistakes."
+      },
+      "practice": {
+        "question": "Which record is most useful to another student?",
+        "choices": [
+          "Sun: 70 mL; shade: 85 mL; after 60 minutes.",
+          "The sun won.",
+          "The shade tray was confusing."
+        ],
+        "correct": 0,
+        "explanation": "Precise quantities, labels and time make results inspectable."
+      },
+      "test": {
+        "question": "Three trials disagree slightly. What should the learner record?",
+        "choices": [
+          "Only the most exciting result.",
+          "All three results and the conditions for each trial.",
+          "The prediction as if it had been measured."
+        ],
+        "correct": 1,
+        "explanation": "Retaining actual outcomes avoids selective reporting."
+      },
+      "review": {
+        "question": "A classmate wants to reproduce your experiment. Which record helps most?",
+        "choices": [
+          "A drawing of a smiling sun with no values.",
+          "A claim that the experiment was easy.",
+          "A table of starting and ending amounts, times and conditions."
+        ],
+        "correct": 2,
+        "explanation": "Reproducibility needs specific conditions and observations."
+      },
+      "outcome_ids": [
+        "o-test",
+        "o-explain"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section R"
+        }
+      ]
+    },
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [
+        "test",
+        "record"
+      ],
+      "prerequisite_rationales": {
+        "test": "Evidence must come from a method that meaningfully tests the question.",
+        "record": "The learner must preserve actual results to evaluate what the test showed."
+      },
+      "uncertainty": "none",
+      "id": "evidence",
+      "title": "Use Results as Evidence",
+      "tier": 4,
+      "lane": 2.5,
+      "track_ids": [
+        "integrate"
+      ],
+      "learn": "Evidence is information used to support or challenge an explanation. Check whether a result came from a fair test and whether it was recorded accurately. A result can support a claim without proving it true in every possible situation.",
+      "example": "In repeated trials, the sunny tray loses more measured water; this supports the idea that sunlight affects drying under those tested conditions.",
+      "reinforce": {
+        "question": "What makes a measured result useful as evidence?",
+        "answer": "It is relevant to the question, obtained in a checkable way and interpreted with awareness of its limits."
+      },
+      "practice": {
+        "question": "Which statement uses the tray results appropriately?",
+        "choices": [
+          "The observed sunny tray lost more water during our tested hour.",
+          "Every liquid always disappears faster anywhere sunny.",
+          "We may ignore the recorded amounts because our prediction was confident."
+        ],
+        "correct": 0,
+        "explanation": "The first claim stays within the evidence actually collected."
+      },
+      "test": {
+        "question": "A single fair test supports a claim. What should you still consider?",
+        "choices": [
+          "Nothing; a single trial proves a universal rule.",
+          "Other conditions, possible errors and repeated trials.",
+          "Only whether the teacher likes the answer."
+        ],
+        "correct": 1,
+        "explanation": "Good evidence has scope and uncertainty."
+      },
+      "review": {
+        "question": "A new trial conflicts with previous observations. What is the best response?",
+        "choices": [
+          "Discard the inconvenient trial.",
+          "Declare the source material wrong without checking.",
+          "Keep all results and examine differences in conditions or methods."
+        ],
+        "correct": 2,
+        "explanation": "Conflicting results call for further examination."
+      },
+      "outcome_ids": [
+        "o-explain"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section E"
+        }
+      ]
+    },
+    {
+      "kind": "concept",
+      "subject": "Scientific Thinking",
+      "prerequisites": [
+        "evidence"
+      ],
+      "prerequisite_rationales": {
+        "evidence": "A defensible explanation must relate a conclusion to relevant tested evidence."
+      },
+      "uncertainty": "none",
+      "id": "explain",
+      "title": "Explain With Reasons",
+      "tier": 5,
+      "lane": 2.5,
+      "track_ids": [
+        "integrate"
+      ],
+      "learn": "An explanation answers a question by connecting a claim to observations and reasoning. Say what happened, which results support it, and what remains uncertain. Clear explanations are open to improvement when new evidence appears.",
+      "example": "'In our hour-long trial, the sunny tray lost 30 mL and the shaded tray 15 mL. This supports faster loss in sunlight in this setup; further tests could check other temperatures and locations.'",
+      "reinforce": {
+        "question": "What three parts make a careful evidence-based explanation?",
+        "answer": "A claim, the observations or measurements supporting it, and reasoning plus any important limitations."
+      },
+      "practice": {
+        "question": "Which explanation is best supported by our tray experiment?",
+        "choices": [
+          "In this test, the sunny tray lost more measured water than the shaded tray.",
+          "Sunlight is always strongest everywhere.",
+          "I liked the sunny tray so it must be correct."
+        ],
+        "correct": 0,
+        "explanation": "The first explanation limits itself to the observed test."
+      },
+      "test": {
+        "question": "Why include 'in this test' in a scientific explanation?",
+        "choices": [
+          "It makes the explanation weaker by admitting facts.",
+          "It marks what the available evidence actually establishes.",
+          "It means the measurements were invented."
+        ],
+        "correct": 1,
+        "explanation": "Good reasoning does not overclaim beyond observed conditions."
+      },
+      "review": {
+        "question": "A friend asks why you changed your conclusion after new data. What should you say?",
+        "choices": [
+          "Once chosen, an explanation must never change.",
+          "Explanations should follow the most popular classmate.",
+          "New evidence changed which explanation was best supported."
+        ],
+        "correct": 2,
+        "explanation": "Explanations should improve as evidence improves."
+      },
+      "outcome_ids": [
+        "o-explain"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section X"
+        }
+      ]
+    },
+    {
+      "kind": "milestone",
+      "subject": "Scientific Thinking",
+      "prerequisites": [
+        "explain"
+      ],
+      "prerequisite_rationales": {
+        "explain": "Integrated mastery requires explaining a defensible conclusion using the full preceding inquiry method."
+      },
+      "uncertainty": "none",
+      "id": "mastery",
+      "title": "Investigate and Explain Independently",
+      "tier": 6,
+      "lane": 2.5,
+      "track_ids": [
+        "integrate"
+      ],
+      "learn": "You can now work from a simple observation and an investigable question through a prediction, fair comparison, careful measurement, recorded trials, and an evidence-based explanation. Mastery means using these connected skills appropriately in an unfamiliar example and improving when new information appears.",
+      "example": "Investigate why two similar pieces of cloth dry at different speeds. Ask a testable question, predict, measure, record, compare, then explain what your results do and do not show.",
+      "reinforce": {
+        "question": "What complete investigation sequence can you explain to a younger learner?",
+        "answer": "Observe, ask, compare, predict, measure, test fairly, record all results, evaluate evidence and explain with limitations."
+      },
+      "practice": {
+        "question": "You are starting a new cloth-drying investigation. What is a strong first plan?",
+        "choices": [
+          "Ask a measurable question and choose comparable conditions and measurements.",
+          "Copy the earlier puddle answer without testing cloth.",
+          "Change every condition and remember the result loosely."
+        ],
+        "correct": 0,
+        "explanation": "The first plan applies the full sequence rather than memorizing one case."
+      },
+      "test": {
+        "question": "Two drying trials disagree. Which response best demonstrates mastery?",
+        "choices": [
+          "Erase one trial to make the prediction look right.",
+          "Record both, check conditions, repeat carefully and adjust the explanation.",
+          "Stop making observations because the topic is mastered."
+        ],
+        "correct": 1,
+        "explanation": "Mastery includes checking uncertainty and revising ideas."
+      },
+      "review": {
+        "question": "Which student demonstrates transferable understanding?",
+        "choices": [
+          "The student who memorizes the puddle's numbers but cannot investigate cloth.",
+          "The student who claims every prediction must be correct.",
+          "The student who designs, records and explains a new fair investigation."
+        ],
+        "correct": 2,
+        "explanation": "True mastery transfers the reasoning process to a fresh problem."
+      },
+      "outcome_ids": [
+        "o-observe",
+        "o-test",
+        "o-explain"
+      ],
+      "source_refs": [
+        {
+          "source_id": "example-source",
+          "locator": "Section Z"
+        }
+      ]
+    }
+  ]
+}
