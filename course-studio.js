@@ -3,7 +3,7 @@
 "use strict";
 const V=root.SDGCoursePackage,S=root.SDGArchitectStore,Cloud=root.SDGCourseCloud;
 const $=id=>document.getElementById(id),elt=(tag,value,cls)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(value!==undefined)e.textContent=String(value);return e};
-let initialized=false,screen=null,parts=[],course=null,report=null,cloudId=null,cloudVersion=null,cloudVisibility="private",editable=false,session=null,collectionScope="public",collectionOffset=0,busy=false;
+let initialized=false,screen=null,parts=[],course=null,report=null,cloudId=null,cloudVersion=null,cloudVisibility="private",editable=false,session=null,collectionScope="public",collectionOffset=0,busy=false,sharedOpened=false;
 const MAX_FILE=25000000;
 const text=(id,value)=>{const e=$(id);if(e)e.textContent=String(value??"")};
 function message(value,isError=false){text("studio-message",value);$("studio-message")?.classList.toggle("error",isError)}
@@ -88,6 +88,7 @@ function render(){
  $("studio-export").disabled=!course;
  $("studio-save").disabled=!canUse||!session;
  $("studio-revisions").disabled=!session||!cloudId||!editable;
+ $("studio-share").disabled=!cloudId||cloudVisibility==="private";
  $("studio-visibility").value=cloudVisibility;
  const c=course?.course;
  text("studio-course-title",c?c.title+" · Revision "+c.revision+" · "+course.nodes.length+" fully authored concepts":"No valid course selected.");
@@ -168,6 +169,12 @@ async function loadCloud(id){
   message("Loaded "+course.course.title+" from the "+(editable?"private owner":"public/shared")+" collection. Choose Use in Learning Tree to study.");
  }catch(e){message("Could not open cloud course: "+e.message,true)}
 }
+async function shareLink(){
+ if(!cloudId||cloudVisibility==="private")return message("Save a public or unlisted course first to enable sharing.",true);
+ const url=new URL("./",location.href);url.searchParams.set("course",cloudId);
+ try{await navigator.clipboard.writeText(url.href);message("Share link copied: "+url.href)}
+ catch{prompt("Copy this course's public/unlisted share link:",url.href)}
+}
 async function revisionHistory(){
  if(!cloudId||!editable)return;
  try{
@@ -206,7 +213,7 @@ function bind(){
  $("studio-export-report").onclick=()=>report&&downloadable("SDGGold_validation_report.json",JSON.stringify(report,null,2));
  $("studio-edit").onclick=edit;$("studio-apply-editor").onclick=applyEdited;
  $("studio-use").onclick=use;$("studio-export").onclick=()=>course&&downloadable("SDGGold_"+course.course.course_id+".json",JSON.stringify(course,null,2));
- $("studio-login").onclick=login;$("studio-logout").onclick=logout;$("studio-save").onclick=save;$("studio-revisions").onclick=revisionHistory;
+ $("studio-login").onclick=login;$("studio-logout").onclick=logout;$("studio-save").onclick=save;$("studio-revisions").onclick=revisionHistory;$("studio-share").onclick=shareLink;
  $("studio-public").onclick=()=>browse("public");$("studio-mine").onclick=()=>browse("mine");
  $("studio-more").onclick=()=>browse(collectionScope,collectionOffset);
  $("studio-visibility").onchange=e=>{cloudVisibility=e.target.value};
@@ -220,7 +227,10 @@ async function init(){
  bind();await restore();render();authCheck();
 }
 async function open(){
- try{await init();document.querySelector(".stage").classList.add("architect-mode");render()}
+ try{await init();document.querySelector(".stage").classList.add("architect-mode");render();
+  const sharedId=new URLSearchParams(location.search).get("course");
+  if(sharedId&&!sharedOpened){sharedOpened=true;await loadCloud(sharedId)}
+ }
  catch(e){console.error("SDGGold Import Studio",e);alert("Import Studio could not open: "+e.message)}
 }
 function close(){document.querySelector(".stage")?.classList.remove("architect-mode")}
