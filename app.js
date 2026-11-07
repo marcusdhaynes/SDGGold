@@ -210,7 +210,7 @@ $("progressDetail").textContent=c.mastered+" / "+total+" concepts";$("overallPct
 const f=focus();$("focusDetail").textContent=f?f.title+" · "+level(f.id)+" / 5 mastery":"All concepts mastered";
 const next=course.nodes.filter(n=>state(n)==="locked").sort((a,b)=>a.tier-b.tier)[0];
 $("milestoneDetail").textContent=next?"Unlock "+next.title+" ("+next.prerequisites.filter(id=>level(id)<5).length+" concepts)":"Continue toward mastery";
-$("courseSubtitle").textContent=course.subtitle||"Every idea begins with understandable foundations";
+
 }
 function open(id){const n=get(id);if(!n)return;current=n;revealed=false;recent=[id,...recent.filter(x=>x!==id)].slice(0,30);save();renderPanel();$("panelLayer").classList.add("open");$("panelLayer").setAttribute("aria-hidden","false");$("closePanel").focus()}
 function closePanel(){$("panelLayer").classList.remove("open");$("panelLayer").setAttribute("aria-hidden","true");current=null;renderGraph()}
@@ -285,7 +285,7 @@ if(view==="review")modal("Review",b=>{const list=course.nodes.filter(n=>level(n.
 if(view==="insights")modal("Insights",b=>{const mastered=course.nodes.filter(n=>level(n.id)===5).length;b.append(mk("p",null,mastered+" of "+course.nodes.length+" concepts mastered. Every node follows Learn → Recall → Practice → Test → Mastery Review."))});
 }
 // Zoom transforms the already-rendered graph without rebuilding hundreds of nodes.
- // Wheel/pinch zoom stays anchored to the pointer; +/- buttons use viewport center.
+ // Wheel/pinch zoom stays anchored to the pointer. The Fit control resets the view.
 function setZoom(value,anchor){
  const v=$("viewport"),graph=$("graph"),spacer=$("spacer"),G=window.SDGTreeGestures;
  const next=G.clampZoom(value),before=zoom;
@@ -301,7 +301,7 @@ function setZoom(value,anchor){
  spacer.style.width=Math.ceil(width*zoom)+"px";
  spacer.style.height=Math.ceil(height*zoom)+"px";
  v.scrollLeft=target.left;v.scrollTop=target.top;
- $("zoomValue").textContent=Math.round(zoom*100)+"%";
+ 
 }
 function fitTree(){
  const d=positions(),v=$("viewport");
@@ -345,7 +345,7 @@ document.querySelectorAll(".checkline input").forEach(b=>b.addEventListener("cha
 $("treeOptions").addEventListener("click",options);
 initSidebar();
 window.SDGTreeGestures.attach({viewport:$("viewport"),getZoom:()=>zoom,setZoom});
-$("settingsButton").addEventListener("click",()=>window.SDGReferenceSettings?.open());$("zoomOut").addEventListener("click",()=>setZoom(zoom-.1));$("zoomIn").addEventListener("click",()=>setZoom(zoom+.1));$("zoomFit").addEventListener("click",fitTree);
+$("settingsButton").addEventListener("click",()=>window.SDGReferenceSettings?.open());$("zoomFit").addEventListener("click",fitTree);
 $("account").addEventListener("click",()=>modal("Local Learning Profile",b=>b.append(mk("p",null,"Progress is stored in this browser. Google login is planned but not active."))));
 $("notifications").addEventListener("click",()=>modal("Notifications",b=>b.append(mk("p",null,"No new notifications. Your next milestone is shown in the progress footer."))));
 function sanitizeProgress(){
