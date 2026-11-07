@@ -1,36 +1,52 @@
 <div class="architect-hero">
- <div><div class="architect-eyebrow">SDGGOLD · INTELLIGENT COURSE ENGINE</div><h1>AI Curriculum Architect <span style="color:#c2964f">✦</span></h1><p>Transform extensive, disorganized learning materials into the smallest logically complete progression tree. Every claim remains traceable, every required path stays connected, and every concept receives five mastery checkpoints.</p></div>
- <div class="architect-pills"><span id="arch-auth-badge" class="architect-badge warn">Not signed in</span><span class="architect-badge">Private until you publish</span></div>
+<div><div class="architect-eyebrow">SDGGOLD · EXTERNAL-AI READY COURSE WORKFLOW</div><h1>Course Import Studio <span style="color:#c2964f">✦</span></h1>
+<p>Let ChatGPT do every part of the research, lesson writing, track design, and prerequisite reasoning outside the app. Import its finished package; SDGGold checks the structure, saves each revision, and opens the complete mastery tree. <strong>No in-app AI calls.</strong></p></div>
+<div class="architect-pills"><span class="architect-badge good">100% non-AI import</span><span id="studio-auth-badge" class="architect-badge warn">Cloud sign-in required</span></div>
 </div>
 <div class="architect-flow">
- <div class="architect-step"><span>01 · INTAKE</span><strong>Import Anything</strong><small>Books, notes, documents, packets and images</small></div>
- <div class="architect-step"><span>02 · UNDERSTAND</span><strong>Find Foundations</strong><small>Extract, normalize, deduplicate, cite</small></div>
- <div class="architect-step"><span>03 · STRUCTURE</span><strong>Build the Tree</strong><small>Optimize branches, merges and prerequisites</small></div>
- <div class="architect-step"><span>04 · MASTER</span><strong>Author & Audit</strong><small>Five checkpoints and coverage review</small></div>
+<div class="architect-step"><span>01 · CHATGPT</span><strong>External Architecture</strong><small>Sources → concepts → branches → 5 full phases</small></div>
+<div class="architect-step"><span>02 · IMPORT</span><strong>Complete JSON / JSONL</strong><small>One file or unlimited numbered input batches</small></div>
+<div class="architect-step"><span>03 · VALIDATE</span><strong>Deterministic Audit</strong><small>IDs, sources, stages, edges, final mastery</small></div>
+<div class="architect-step"><span>04 · LEARN</span><strong>Supabase & Tree</strong><small>Save/update privately or share, then study</small></div>
 </div>
 <div class="architect-grid">
- <section class="architect-card">
-  <h2>Course Intake</h2><p>Combine multiple input methods in one project. Large text is chunked and locally checkpointed so interrupted processing can resume without starting over.</p>
-  <label class="architect-label" for="arch-title">Course name</label><input class="architect-field" id="arch-title" maxlength="150" placeholder="e.g. Comprehensive Biology">
-  <div class="architect-actions"><button class="architect-btn soft" id="arch-new">＋ New Course</button><button class="architect-btn soft" id="arch-template">▤ Preprocessing Template</button><button class="architect-btn soft" id="arch-export-packet">⇩ Export Packet</button></div>
-  <label class="architect-drop" id="arch-drop" for="arch-files"><span class="glyph">⇪</span><strong>Drop course materials here</strong><small>Multiple files or folders: PDF, Word, PowerPoint, Excel, EPUB, ZIP, text, Markdown, HTML, CSV, JSONL and images. Scanned pages and recordings may require external preprocessing.</small><input id="arch-files" type="file" multiple accept=".txt,.md,.markdown,.json,.jsonl,.ndjson,.pdf,.docx,.pptx,.xlsx,.odt,.epub,.zip,.csv,.tsv,.srt,.vtt,.html,.htm,.xml,.rtf,.tex,.png,.jpg,.jpeg,.webp,.log,.yaml,.yml,.mp3,.m4a,.mp4,.wav,.mov,.webm"></label>
-  <div class="architect-actions"><button class="architect-btn soft" id="arch-folder">▤ Select Folder</button></div>
-  <label class="architect-label" for="arch-paste">Paste notes, excerpts or preprocessor JSONL</label><textarea class="architect-textarea" id="arch-paste" placeholder="Paste your raw notes or JSONL records here."></textarea>
-  <div class="architect-actions"><button class="architect-btn soft" id="arch-add-text">＋ Add Text</button><button class="architect-btn soft" id="arch-add-packet">＋ Import JSONL Records</button></div>
-  <label class="architect-label" for="arch-web">Website URL (if direct extraction is permitted)</label><input class="architect-field" id="arch-web" type="url" placeholder="https://example.edu/lecture">
-  <div class="architect-actions"><button class="architect-btn soft" id="arch-add-web">＋ Import Webpage</button></div>
-  <div class="architect-notice">Unfetched links, unreadable scans, untranscribed media, missing citations and uncertainty are recorded as visible gaps—not silently treated as processed.</div>
-  <div class="architect-divider"></div><h3>Curriculum priorities</h3><div class="architect-pills"><span class="architect-badge">Child-first foundations</span><span class="architect-badge">Fewest necessary branches</span><span class="architect-badge">Every prerequisite enforced</span><span class="architect-badge">Comprehensive coverage</span></div>
-  <div class="architect-actions" style="margin-top:18px"><button class="architect-btn" id="arch-generate">✦ Generate with AI</button><button class="architect-btn alt" id="arch-draft">◇ Build Local Draft</button><button class="architect-btn danger" id="arch-pause" disabled>Pause</button></div>
-  <div class="architect-progress"><div id="arch-progress"></div></div><p id="arch-work-label">No processing started</p><div class="architect-status" id="arch-message" role="status">Import course material and choose AI processing. Documents stay local until an authenticated request is initiated.</div>
- </section>
- <aside style="display:flex;flex-direction:column;gap:18px;min-width:0">
-  <section class="architect-card"><h2>AI Connection</h2><p>AI analysis requires Google sign-in and a private server-side API key. The secret never appears in the public web app.</p><div class="architect-actions"><button class="architect-btn alt" id="arch-login">Sign In With Google</button><button class="architect-btn soft" id="arch-logout" hidden>Sign Out</button></div><p id="arch-auth-detail">Not connected. Preprocessed packets and local drafts are available without AI calls.</p></section>
-  <section class="architect-card"><h2>Processing Dashboard</h2><div class="architect-statrow"><div class="architect-stat"><strong id="arch-sources">0</strong><small>Sources</small></div><div class="architect-stat"><strong id="arch-passages">0</strong><small>Passages</small></div><div class="architect-stat"><strong id="arch-concepts">0</strong><small>Concepts</small></div></div>
-    <div><strong id="arch-phase" style="font:700 16px Georgia,serif">Collect</strong><span id="arch-calls" style="float:right;font-size:11px;color:#64717b">0 AI calls</span></div><p id="arch-count-summary">No course selected</p>
-    <div class="architect-actions"><button class="architect-btn" id="arch-apply" disabled>↗ Use in Learning Tree</button><button class="architect-btn soft" id="arch-download" disabled>⇩ Course JSON</button><button class="architect-btn soft" id="arch-audit-export" disabled>⇩ Audit Report</button></div>
-  </section>
-  <section class="architect-card"><h2>Curriculum Quality Report</h2><p id="arch-quality">Validation results appear here after a course is generated.</p><ul class="architect-issues" id="arch-issues"></ul></section>
-  <section class="architect-card"><h2>Local Projects</h2><p>Return to a previous project at its saved checkpoint.</p><div class="architect-joblist" id="arch-jobs"></div><div class="architect-actions"><button class="architect-btn danger" id="arch-delete">Delete Selected Project</button></div></section>
- </aside>
-</div>
+<section class="architect-card">
+<h2>1. Give ChatGPT the Exact Instructions</h2>
+<p>Use the master prompt and complete working example together. The external AI must produce a finished course with every lesson, question, connection, source citation, track and final mastery node already decided.</p>
+<div class="architect-actions"><button class="architect-btn" id="studio-template">⇩ Download Master ChatGPT Template</button><button class="architect-btn soft" id="studio-example">⇩ Download Complete Example</button><button class="architect-btn soft" id="studio-example-preview">◎ Validate Example</button></div>
+<div class="architect-notice">Do not upload unstructured raw notes here. Give them to ChatGPT first. This importer intentionally does not extract, summarize, infer dependencies, author lessons, or use an AI model.</div>
+<div class="architect-divider"></div>
+<h2>2. Import the Finished Course</h2>
+<label class="architect-drop" for="studio-files" id="studio-drop"><span class="glyph">⇪</span><strong>Drop the complete course package</strong><small>Choose a fully authored .json course OR all numbered .jsonl/.ndjson batches together. Add more batches until the course_end record confirms completeness.</small><input type="file" id="studio-files" accept=".json,.jsonl,.ndjson,application/json" multiple></label>
+<label class="architect-label" for="studio-paste">Alternatively, paste final JSON or a complete batch of JSONL records</label>
+<textarea class="architect-textarea" id="studio-paste" placeholder="Paste a fully formatted sdggold-course-v2 package or JSONL records, not raw source material."></textarea>
+<div class="architect-actions"><button class="architect-btn soft" id="studio-add-paste">＋ Add Pasted Package / Batch</button><button class="architect-btn soft" id="studio-clear">Clear Pending Inputs</button></div>
+<div class="architect-status" id="studio-message" role="status">No course imported. Download the external ChatGPT prompt and example to begin.</div>
+<div class="architect-divider"></div>
+<h2>3. Structure & Mastery Audit</h2>
+<div class="architect-statrow">
+<div class="architect-stat"><strong id="studio-nodes">0</strong><small>Concepts</small></div><div class="architect-stat"><strong id="studio-tracks">0</strong><small>Tracks</small></div><div class="architect-stat"><strong id="studio-edges">0</strong><small>Connections</small></div></div>
+<div class="architect-pills"><span id="studio-validity" class="architect-badge warn">Awaiting import</span><span id="studio-mastery" class="architect-badge">Mastery not checked</span></div>
+<p id="studio-report-summary">The importer checks every declared prerequisite, connection rationale, chapter path, source ID, distinct phase question and single final mastery.</p>
+<ul id="studio-errors" class="architect-issues"></ul>
+<h3>Review warnings</h3><ul id="studio-warnings" class="architect-issues"></ul>
+<div class="architect-actions"><button class="architect-btn soft" id="studio-export-report" disabled>⇩ Export Full Validation Report</button><button class="architect-btn soft" id="studio-edit" disabled>✎ Edit Package JSON</button></div>
+<div id="studio-editor-wrap" hidden><label class="architect-label" for="studio-editor">Edit complete course JSON (all errors must be fixed before saving)</label><textarea class="architect-textarea" style="min-height:330px;font-family:monospace" id="studio-editor"></textarea><div class="architect-actions"><button class="architect-btn" id="studio-apply-editor">Validate Edited JSON</button></div></div>
+</section>
+<aside style="display:flex;flex-direction:column;gap:18px;min-width:0">
+<section class="architect-card"><h2>4. Start Learning</h2><p id="studio-course-title">No valid course selected.</p>
+<div class="architect-actions"><button class="architect-btn" id="studio-use" disabled>↗ Use in Learning Tree</button><button class="architect-btn soft" id="studio-export" disabled>⇩ Export JSON</button></div>
+<p>Learning works locally immediately after validation. Cloud saving is optional.</p></section>
+<section class="architect-card"><h2>Google & Supabase Library</h2><p id="studio-user">Sign in to save, update, edit and share your course in the isolated SDGGold section of Supabase. Public courses can be browsed without signing in.</p>
+<div class="architect-actions"><button class="architect-btn alt" id="studio-login">Sign In With Google</button><button class="architect-btn soft" id="studio-logout" hidden>Sign Out</button></div>
+<label class="architect-label" for="studio-visibility">Visibility on save</label><select class="architect-select" id="studio-visibility"><option value="private">Private — only me</option><option value="unlisted">Unlisted — anyone with link</option><option value="public">Public — shared collection</option></select>
+<div class="architect-actions"><button class="architect-btn" id="studio-save" disabled>☁ Save / Update in Supabase</button></div>
+<p id="studio-cloud-status">Cloud status: not saved.</p>
+<div class="architect-actions"><button class="architect-btn soft" id="studio-revisions" disabled>⟲ Revision History</button></div>
+</section>
+<section class="architect-card"><h2>Online Course Collection</h2><p>Public courses are readable by everyone. Your own private drafts and revisions appear after signing in.</p>
+<div class="architect-actions"><button class="architect-btn soft" id="studio-public">▤ Browse Public</button><button class="architect-btn soft" id="studio-mine">♙ My Courses</button></div>
+<div id="studio-collection" class="architect-joblist" aria-label="Cloud courses"><div class="architect-job" style="cursor:default">Choose Public or My Courses.</div></div>
+<div class="architect-actions"><button class="architect-btn soft" id="studio-more" hidden>Load More</button></div>
+</section>
+</aside></div>
