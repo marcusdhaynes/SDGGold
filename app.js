@@ -193,6 +193,8 @@ body.append(mk("p",null,"The gold progress shown in the original sample is demon
 function setSection(s){section=s;document.querySelectorAll(".sidebutton").forEach(b=>b.classList.toggle("active",b.dataset.section===s));renderGraph();if(s==="saved"&&!saved.length)modal("Saved Concepts",b=>b.append(mk("p",null,"Open a concept and click Save Concept to add it here.")))}
 function nav(view){
 document.querySelectorAll(".navbtn").forEach(b=>b.setAttribute("aria-current",b.dataset.view===view?"page":"false"));
+if(view==="architect"){window.SDGArchitectUI?.open();return}
+window.SDGArchitectUI?.close();
 if(view==="progression"){closeModal();return}
 if(view==="learn"||view==="practice"){const n=focus();if(n)open(n.id);else modal("Course Complete",b=>b.append(mk("p",null,"All concepts are mastered.")));return}
 if(view==="review")modal("Review",b=>{const list=course.nodes.filter(n=>level(n.id)>0);if(!list.length)b.append(mk("p",null,"Begin learning to create a review list."));list.forEach(n=>b.append(btn(n.title+" · "+level(n.id)+"/5",()=>{closeModal();open(n.id)},true)))});
@@ -220,5 +222,13 @@ function sanitizeProgress(){
   }
   if(previous!==JSON.stringify(progress))save();
 }
+window.SDGGoldAcceptCourse=function(candidate){
+  validate(candidate);
+  // Loading a new course is explicit and never alters another app's data or Supabase schema.
+  course=candidate;progress={};saved=[];recent=[];
+  localStorage.setItem(COURSE_STORE,JSON.stringify(candidate));save();
+  section="all";$("search").value="";
+  refresh();requestAnimationFrame(fitTree);
+};
 validate(SAMPLE);sanitizeProgress();refresh();requestAnimationFrame(fitTree);
 if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(e=>console.warn("Offline installation unavailable",e)))}
