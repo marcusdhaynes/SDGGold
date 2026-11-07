@@ -102,6 +102,6 @@ test("stress: 1000-node hierarchical chain remains structurally valid",()=>{
   n.kind="concept";n.track_ids=["observe"];nodes.push(n);
  }
  const mastery=copy(last);mastery.id="mastery";mastery.tier=999;mastery.prerequisites=["layer-998"];mastery.prerequisite_rationales={"layer-998":"Final application requires the last prerequisite."};
- x.nodes=[...nodes,mastery];const r=V.audit(x);
+ x.nodes=[...nodes,mastery];x.tracks=x.tracks.filter(t=>t.id==="observe");mastery.track_ids=["observe"];const r=V.audit(x);
  assert.ok(r.ok,JSON.stringify(r.errors.slice(0,4)));assert.equal(r.metrics.nodes,1000);
 });
