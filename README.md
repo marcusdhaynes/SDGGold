@@ -33,6 +33,19 @@ Choose **Copy Everything** to copy all six full files with clear `BEGIN FILE`/`E
 5. Use the course in the live progression tree immediately. **No AI calls** occur.
 6. Optionally sign into Google and save/update the validated package in the isolated SDGGold Supabase library. Each cloud update creates a new version. Browse public courses or load your private courses and historical versions.
 
+## Coherent, collision-free progression tracks
+
+Every authored concept is rendered as its own distinct button. The graph no longer treats `lane` as a fixed vertical coordinate, because two concepts may otherwise occupy exactly the same position. Instead it automatically:
+
+- Builds separate color-accented horizontal bands for distinct curriculum tracks, with shared foundations identified separately.
+- Expands dense tiers into subcolumns of at most six cards per track, keeping all concepts individually accessible without overlapping.
+- Preserves every source prerequisite exactly as authored and enforces **all-parent completion** before unlocking a node.
+- Uses small, clickable **track-readiness collectors** to visualize large final convergence without drawing dozens of simultaneous long lines. These collectors are visual summaries, never additional lessons or bypasses.
+- Offers a track-jump menu, a live visible node count, individual edge highlighting on hover/focus, and an explicit All Links switch for inspecting every real dependency.
+- Flags 9+ direct prerequisites to final mastery and generic non-explanatory link rationales as curriculum-quality warnings, while allowing structurally sound private drafts to load.
+
+An example source corpus with 69 nodes and 36 concepts in one tier was tested against this layout: all 69 receive independent positions, with zero intersections of node card rectangles. It is still the external ChatGPT author's responsibility to make the *semantic* prerequisite structure reasonable.
+
 ## Five mastery checkpoints
 
 - **Learn:** fully written explanation with an example.
