@@ -27,6 +27,10 @@ jobs:
           test -s EXAMPLE_COMPLETE_COURSE.json
           test -s CHATGPT_COURSE_TEMPLATE.md
           test -s course-studio.js
+          test -s settings-reference.js
+          test -s settings-ui.js
+          test -s settings-panel.html
+          test -s settings.css
           grep -q 'SDGGold' index.html
           grep -q 'styles.css' index.html
           grep -q 'app.js' index.html
@@ -41,7 +45,7 @@ jobs:
           PY
       - name: Check JavaScript syntax and progression invariants
         run: |
-          for file in app.js course-package.js architect-store.js course-cloud.js course-studio.js; do node --check "$file"; done
+          for file in app.js course-package.js architect-store.js course-cloud.js course-studio.js settings-reference.js settings-ui.js sw.js; do node --check "$file"; done
           node --test tests/*.test.cjs
           node tools/validate-course.cjs EXAMPLE_COMPLETE_COURSE.json
           node tools/validate-course.cjs EXAMPLE_BATCH_B001.jsonl EXAMPLE_BATCH_B002.jsonl EXAMPLE_BATCH_B003.jsonl
