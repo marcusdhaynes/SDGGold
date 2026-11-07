@@ -29,7 +29,14 @@ function gap(job,name,reason,kind="unsupported_format"){
 async function addRecords(job,records,label){
  const p=job.packet;C.ingestPackets(p,records,label);
  const parts=p.passages.splice(0);
- for(const piece of parts)await Store.savePassage(job.id,piece);
+ for(const piece of parts){
+  const prior=await Store.get("passages",[job.id,piece.chunk_id]);
+  if(prior){
+   if(prior.text!==piece.text||prior.source_id!==piece.source_id)job.packet.issues.push({severity:"high",code:"conflicting_chunk_id",detail:"A different passage attempted to reuse ID "+piece.chunk_id+". Original content was preserved."});
+   continue;
+  }
+  await Store.savePassage(job.id,piece);
+ }
  job.input_chars=(job.input_chars||0)+parts.reduce((sum,x)=>sum+(x.text||"").length,0);
 }
 async function pdfFile(job,file,onProgress){
