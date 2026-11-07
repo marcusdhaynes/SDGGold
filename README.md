@@ -33,6 +33,17 @@ Choose **Copy Everything** to copy all six full files with clear `BEGIN FILE`/`E
 5. Use the course in the live progression tree immediately. **No AI calls** occur.
 6. Optionally sign into Google and save/update the validated package in the isolated SDGGold Supabase library. Each cloud update creates a new version. Browse public courses or load your private courses and historical versions.
 
+## Tree navigation: scroll, pinch, drag and icon-only sidebar
+
+- **Mouse wheel / trackpad scroll:** Zoom the learning tree smoothly around the mouse pointer, including trackpad pinch delivered as wheel input.
+- **Two-finger touchscreen pinch:** Zoom around the midpoint between the fingers, and pan naturally if the midpoint moves.
+- **Click-and-drag / one-finger touch drag:** Pan horizontally and vertically without visible scrollbars. Dragging from a concept button suppresses the click; a normal tap still opens its lesson.
+- **Zoom toolbar:** The existing −, + and Fit buttons remain available.
+- **Collapse sidebar:** The Learning Tree sidebar's chevron toggles between full labels and a narrow 62px icon rail. Navigation and progress filters remain clickable; search, subject, stage and concept-type icons re-expand to focus their original controls. Sidebar state persists on the device.
+- **Vertical fit:** The app uses the browser's dynamic viewport height (100dvh) rather than a fixed minimum height. Its internal panes are constrained to the space available.
+
+These gestures apply to the tree canvas only; the learning content, imports, source materials, progress and mastery prerequisites are unchanged.
+
 ## Coherent, collision-free progression tracks
 
 Every authored concept is rendered as its own distinct button. The graph no longer treats `lane` as a fixed vertical coordinate, because two concepts may otherwise occupy exactly the same position. Instead it automatically:
