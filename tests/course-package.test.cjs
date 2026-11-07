@@ -10,7 +10,7 @@ test("canonical example is COMPLETE and validates with no structural errors",()=
  assert.equal(r.metrics.tracks,3);
  assert.equal(r.metrics.roots,2);
  assert.ok(r.metrics.merges>=2);
- assert.equal(r.metrics.mastery_nodes,0); // reserved metric; validated via explicit terminal check
+ assert.equal(r.metrics.mastery_nodes,1);
  assert.equal(canonical.course.mastery_node_id,"mastery");
 });
 test("every canonical concept has five authored phases and source links",()=>{
