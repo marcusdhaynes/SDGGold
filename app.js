@@ -29,7 +29,7 @@ function validate(data){
 if(!data||typeof data.title!=="string"||!data.title.trim()||!Array.isArray(data.nodes)||data.nodes.length<1||data.nodes.length>1000)throw Error("Course requires a title and 1–1000 concepts.");
 const by=new Map();
 for(const n of data.nodes){
- if(!n||typeof n.id!=="string"||!n.id||by.has(n.id)||typeof n.title!=="string"||!n.title.trim()||!Number.isInteger(n.tier)||n.tier<0||n.tier>100||typeof n.learn!=="string"||!n.learn.trim()||!Array.isArray(n.prerequisites)||!n.reinforce||typeof n.reinforce.question!=="string"||typeof n.reinforce.answer!=="string"||!quizOK(n.test)||n.practice&&!quizOK(n.practice)||n.review&&!quizOK(n.review))throw Error("Invalid or duplicate concept: "+(n&&n.id));
+ if(!n||typeof n.id!=="string"||!n.id||by.has(n.id)||typeof n.title!=="string"||!n.title.trim()||!Number.isInteger(n.tier)||n.tier<0||n.tier>1000||typeof n.learn!=="string"||!n.learn.trim()||!Array.isArray(n.prerequisites)||!n.reinforce||typeof n.reinforce.question!=="string"||typeof n.reinforce.answer!=="string"||!quizOK(n.test)||n.practice&&!quizOK(n.practice)||n.review&&!quizOK(n.review))throw Error("Invalid or duplicate concept: "+(n&&n.id));
  by.set(n.id,n);
 }
 const children=new Map([...by.keys()].map(id=>[id,[]]));
