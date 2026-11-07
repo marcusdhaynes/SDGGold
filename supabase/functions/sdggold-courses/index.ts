@@ -37,6 +37,14 @@ function courseCheck(p){
   if(!t||typeof t.id!=="string"||trackIds.has(t.id)||!t.id.trim()||!String(t.title||"").trim()||!String(t.distinctness||"").trim())throw Error("Invalid or duplicate track.");
   trackIds.add(t.id);
  }
+ if(!Array.isArray(p.course.outcomes)||!p.course.outcomes.length)throw Error("Course outcomes missing.");
+ const outcomes=new Set(p.course.outcomes.map(x=>x.id));
+ if(outcomes.size!==p.course.outcomes.length)throw Error("Duplicate outcome IDs.");
+ const sourceIds=new Set(p.sources.map(x=>x.id));
+ if(sourceIds.size!==p.sources.length||p.sources.some(x=>!x.id||!x.title||!x.rights))throw Error("Invalid or duplicate sources.");
+ if(!Array.isArray(p.coverage.source_ledger)||p.coverage.source_ledger.length!==sourceIds.size)throw Error("Coverage ledger must account for every source.");
+ if(p.coverage.source_ledger.some(x=>!sourceIds.has(x.source_id)||!Array.isArray(x.processed_locators)||!Array.isArray(x.missing_locators)))throw Error("Bad source coverage ledger entry.");
+ if(!Array.isArray(p.quality.checklist)||!Array.isArray(p.quality.open_questions))throw Error("Missing preflight quality report.");
  const ids=new Map(),deps=new Set();
  for(const n of p.nodes){
   if(!n||typeof n.id!=="string"||!n.id.trim()||ids.has(n.id)||!n.title||!Number.isInteger(n.tier)||n.tier<0||!Array.isArray(n.prerequisites)||!Array.isArray(n.track_ids)||!n.track_ids.length||n.track_ids.some(t=>!trackIds.has(t)))throw Error("Invalid concept identity, tier, or track.");
@@ -45,7 +53,10 @@ function courseCheck(p){
    const q=n[phase];
    if(!q||!String(q.question||"").trim()||!Array.isArray(q.choices)||q.choices.length<2||q.choices.length>8||q.choices.some(x=>typeof x!=="string"||!x.trim())||!Number.isInteger(q.correct)||q.correct<0||q.correct>=q.choices.length||!String(q.explanation||"").trim())throw Error("Missing or malformed "+phase+" checkpoint in "+n.id);
   }
-  if(!Array.isArray(n.source_refs)||!Array.isArray(n.outcome_ids))throw Error("Missing sources or outcomes in "+n.id);
+  if(!Array.isArray(n.source_refs)||n.source_refs.some(x=>!sourceIds.has(x.source_id)||!String(x.locator||"").trim()))throw Error("Unresolved source reference in "+n.id);
+  if(!Array.isArray(n.outcome_ids)||n.outcome_ids.some(x=>!outcomes.has(x)))throw Error("Unresolved outcome in "+n.id);
+  const questions=["practice","test","review"].map(x=>n[x].question.trim().toLowerCase());
+  if(new Set(questions).size!==3)throw Error("Repeated mastery question in "+n.id);
   ids.set(n.id,n);
  }
  const roots=[];
@@ -63,6 +74,7 @@ function courseCheck(p){
  if(!roots.length)throw Error("No fundamental starting concepts.");
  const ends=p.nodes.filter(n=>!deps.has(n.id));
  if(ends.length!==1||ends[0].id!==p.course.mastery_node_id||ends[0].kind!=="milestone")throw Error("All paths must converge at a single declared mastery milestone.");
+ if(new Set(ends[0].outcome_ids).size!==outcomes.size)throw Error("Final mastery must assess every declared outcome.");
  const seen=new Set();
  function visit(id){if(seen.has(id))return;seen.add(id);for(const parent of ids.get(id).prerequisites)visit(parent)}
  visit(ends[0].id);
@@ -122,7 +134,15 @@ Deno.serve(async(req)=>{
    const pack=payload.package,visibility=payload.visibility||"private",expected=payload.expected_version;
    if(!["private","public","unlisted"].includes(visibility))return send(req,400,{error:"Invalid visibility."});
    try{courseCheck(pack)}catch(e){return send(req,422,{error:"Course validation failed: "+e.message})}
-   if(visibility!=="private"&&pack.coverage?.status!=="complete")return send(req,422,{error:"Cannot share a course with incomplete source coverage. Keep it private until reviewed."});
+   if(visibility!=="private"){
+    if(pack.coverage?.status!=="complete"||pack.coverage.source_ledger.some(x=>x.missing_locators.length))
+      return send(req,422,{error:"Cannot share a course with incomplete source coverage."});
+    if(pack.sources.some(x=>!["original","licensed","public_domain"].includes(x.rights)))
+      return send(req,422,{error:"Public/unlisted sharing requires confirmed original, licensed or public-domain source rights."});
+    if(pack.quality.self_checked!==true||pack.quality.open_questions.length||pack.quality.checklist.some(x=>x.passed!==true))
+      return send(req,422,{error:"Public sharing requires a complete preflight checklist with no unresolved questions."});
+    if(payload.publication_reviewed!==true)return send(req,422,{error:"Explicit author confirmation of review and sharing rights is required."});
+   }
    const key=pack.course.course_id,title=pack.course.title,description=String(pack.course.description||"").slice(0,4000);
    const result=await sql.begin(async tx=>{
     const rows=await tx.unsafe("select id,owner_id,version from app_sdggold.course_documents where owner_id=$1::uuid and course_key=$2 for update",[uid,key]);
