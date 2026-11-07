@@ -193,8 +193,8 @@ body.append(mk("p",null,"The gold progress shown in the original sample is demon
 function setSection(s){section=s;document.querySelectorAll(".sidebutton").forEach(b=>b.classList.toggle("active",b.dataset.section===s));renderGraph();if(s==="saved"&&!saved.length)modal("Saved Concepts",b=>b.append(mk("p",null,"Open a concept and click Save Concept to add it here.")))}
 function nav(view){
 document.querySelectorAll(".navbtn").forEach(b=>b.setAttribute("aria-current",b.dataset.view===view?"page":"false"));
-if(view==="architect"){window.SDGArchitectUI?.open();return}
-window.SDGArchitectUI?.close();
+if(view==="studio"){window.SDGCourseStudio?.open();return}
+window.SDGCourseStudio?.close();
 if(view==="progression"){closeModal();return}
 if(view==="learn"||view==="practice"){const n=focus();if(n)open(n.id);else modal("Course Complete",b=>b.append(mk("p",null,"All concepts are mastered.")));return}
 if(view==="review")modal("Review",b=>{const list=course.nodes.filter(n=>level(n.id)>0);if(!list.length)b.append(mk("p",null,"Begin learning to create a review list."));list.forEach(n=>b.append(btn(n.title+" · "+level(n.id)+"/5",()=>{closeModal();open(n.id)},true)))});
@@ -223,10 +223,32 @@ function sanitizeProgress(){
   if(previous!==JSON.stringify(progress))save();
 }
 window.SDGGoldAcceptCourse=function(candidate){
-  validate(candidate);
-  // Loading a new course is explicit and never alters another app's data or Supabase schema.
-  course=candidate;progress={};saved=[];recent=[];
-  localStorage.setItem(COURSE_STORE,JSON.stringify(candidate));save();
+  if(candidate?.schema==="sdggold-course-v2"){
+    const audit=window.SDGCoursePackage?.audit(candidate);
+    if(!audit?.ok)throw Error("Course fails strict v2 validation ("+(audit?.errors.length||0)+" errors).");
+  }
+  const next={...candidate,version:4,title:candidate.title||candidate.course?.title,
+    subtitle:candidate.subtitle||candidate.course?.subtitle||"",nodes:candidate.nodes};
+  validate(next);
+  const old=course,existing=progress;
+  const oldId=old?.course?.course_id,nextId=next?.course?.course_id;
+  const preserve=!!oldId&&oldId===nextId;
+  const original=new Map((old.nodes||[]).map(n=>[n.id,n]));
+  const accepted={};
+  if(preserve){
+    for(const node of next.nodes){
+      const previous=original.get(node.id);
+      if(previous&&JSON.stringify([previous.learn,previous.example,previous.reinforce,previous.practice,previous.test,previous.review,previous.prerequisites])===
+           JSON.stringify([node.learn,node.example,node.reinforce,node.practice,node.test,node.review,node.prerequisites])){
+        if(existing[node.id]>0)accepted[node.id]=existing[node.id];
+      }
+    }
+  }
+  course=next;progress=accepted;
+  saved=saved.filter(id=>next.nodes.some(n=>n.id===id));
+  recent=recent.filter(id=>next.nodes.some(n=>n.id===id));
+  sanitizeProgress();
+  localStorage.setItem(COURSE_STORE,JSON.stringify(next));save();
   section="all";$("search").value="";
   refresh();requestAnimationFrame(fitTree);
 };
