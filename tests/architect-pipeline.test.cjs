@@ -1,6 +1,5 @@
 "use strict";
 const test=require("node:test"),assert=require("node:assert/strict"),C=require("../architect-core.js");
-global.crypto=global.crypto||require("node:crypto").webcrypto;
 const saved=new Map();
 const passages=[{job_id:"J",chunk_id:"S-P0001",source_id:"S",locator:"p.1",text:"Observation means carefully noticing something. Questions ask why things happen. Evidence supports an answer. A student compares observations and tests an explanation."}];
 const fakeStore={
