@@ -75,44 +75,131 @@ if(section==="saved"&&!saved.includes(n.id))return false;
 if(section==="recent"&&!recent.includes(n.id))return false;
 return true;
 }
-function positions(){
-const tiers=[...new Set(course.nodes.map(n=>n.tier))].sort((a,b)=>a-b),pos=new Map();
-tiers.forEach((t,col)=>{
-const items=course.nodes.filter(n=>n.tier===t).sort((a,b)=>String(a.title).localeCompare(b.title));
-items.forEach((n,i)=>pos.set(n.id,{x:36+302*col,y:164+82*(Number.isFinite(n.lane)?n.lane:3+(i-(items.length-1)/2)*1.45)}));
-});
-return {pos,width:Math.max(1200,tiers.length*302+150),height:Math.max(800,Math.max(...[...pos.values()].map(p=>p.y))+160)};
-}
+let showAllConnections=false;
+function positions(){return window.SDGGraphLayout.layout(course)}
 function linkPath(a,b){
-const x=a.x+235,y=a.y+39,tx=b.x,ty=b.y+39,mid=(x+tx)/2;
-if(tx-x<65)return "M "+x+" "+y+" C "+mid+" "+y+","+mid+" "+ty+","+tx+" "+ty;
-const s=Math.sign(ty-y),r=Math.min(18,Math.abs(ty-y)/3);
-return "M "+x+" "+y+" H "+(mid-16)+" Q "+mid+" "+y+" "+mid+" "+(y+s*r)+" V "+(ty-s*r)+" Q "+mid+" "+ty+" "+(mid+16)+" "+ty+" H "+tx;
+ const x=a.x+235,y=a.y+39,tx=b.x,ty=b.y+39,mid=(x+tx)/2;
+ if(tx-x<80)return "M "+x+" "+y+" C "+mid+" "+y+","+mid+" "+ty+","+tx+" "+ty;
+ const curve=Math.max(42,Math.min(100,(tx-x)/3));
+ return "M "+x+" "+y+" C "+(x+curve)+" "+y+","+(tx-curve)+" "+ty+","+tx+" "+ty;
+}
+function treeGuide(layout){
+ const view=$("viewport"),parent=document.querySelector(".canvas-view");
+ let panel=$("treeNavigator");
+ if(!panel){panel=mk("div","tree-navigator");panel.id="treeNavigator";parent.append(panel)}
+ const counts=mk("span","tree-node-count",layout.nodes+" / "+course.nodes.length+" concepts · "+layout.bands.filter(b=>!b.shared).length+" tracks");
+ const select=mk("select","tree-jump");select.setAttribute("aria-label","Jump to a conceptual track");
+ select.add(new Option("Jump to a track…",""));
+ for(const band of layout.bands)select.add(new Option(band.title+" · "+band.count+" concepts",band.id));
+ select.add(new Option("Integrated Mastery","__mastery"));
+ select.addEventListener("change",()=>{
+  const band=layout.bands.find(x=>x.id===select.value);
+  const dest=band?band.top:layout.pos.get(course.course?.mastery_node_id)?.y||0;
+  view.scrollTop=Math.max(0,Math.round(dest*zoom-view.clientHeight*.18));
+  if(select.value==="__mastery")view.scrollLeft=Math.max(0,Math.round((layout.pos.get(course.course?.mastery_node_id)?.x||0)*zoom-view.clientWidth*.45));
+  else view.scrollLeft=0;
+ });
+ const toggle=mk("button","tree-connections",showAllConnections?"All links · ON":"All links · OFF");
+ toggle.type="button";toggle.title="Toggle all exact prerequisite links. Default groups final mastery prerequisites into track-readiness collectors.";
+ toggle.setAttribute("aria-pressed",String(showAllConnections));
+ toggle.addEventListener("click",()=>{showAllConnections=!showAllConnections;renderGraph()});
+ const hint=mk("span","tree-scroll-hint","Scroll both ways · Hover nodes to trace links");
+ panel.replaceChildren(counts,select,toggle,hint);
 }
 function renderGraph(){
-const {pos,width,height}=positions(),view=$("viewport"),ox=view.scrollLeft,oy=view.scrollTop;
-const graph=$("graph"),spacer=$("spacer"),svg=$("lines"),root=$("nodes");
-graph.style.width=width+"px";graph.style.height=height+"px";graph.style.transform="scale("+zoom+")";
-spacer.style.width=Math.ceil(width*zoom)+"px";spacer.style.height=Math.ceil(height*zoom)+"px";svg.setAttribute("viewBox","0 0 "+width+" "+height);
-svg.replaceChildren();root.replaceChildren();
-for(const n of course.nodes)for(const id of n.prerequisites){
-const a=pos.get(id),b=pos.get(n.id),d=linkPath(a,b);
-for(const cls of ["wire-back","wire"+(level(id)===5?" complete":unlocked(n)?" ready":"")]){
-const p=document.createElementNS("http://www.w3.org/2000/svg","path");p.setAttribute("d",d);p.setAttribute("class",cls);svg.append(p);
-}
-for(const point of [{x:a.x+235,y:a.y+39},{x:b.x,y:b.y+39}]){
-const c=document.createElementNS("http://www.w3.org/2000/svg","circle");c.setAttribute("cx",point.x);c.setAttribute("cy",point.y);c.setAttribute("r",4.7);c.setAttribute("class","joint");svg.append(c);
-}}
-for(const n of course.nodes){
-const p=pos.get(n.id),st=state(n),v=level(n.id),b=mk("button","node "+st+(showNode(n)?"":" hide-filter"));
-b.type="button";b.style.left=p.x+"px";b.style.top=p.y+"px";b.title=n.title+" · "+(st==="locked"?"Locked: finish prerequisites":v+" of 5 mastery checkpoints");b.setAttribute("aria-label",b.title);
-b.append(mk("span","node-icon",n.icon||"◈"));
-const core=mk("span","node-core");core.append(mk("span","node-name",n.title));
-const dots=mk("span","node-dots");for(let i=0;i<5;i++)dots.append(mk("span","node-dot"+(i<v?" filled":"")));
-core.append(dots);b.append(core,mk("span","node-corner",st==="mastered"?"✓":st==="locked"?"🔒":v?v+"/5":""));
-if(st==="mastered")b.append(mk("span","laurel","❧"));b.addEventListener("click",()=>open(n.id));root.append(b);
-}
-view.scrollLeft=ox;view.scrollTop=oy;
+ const layout=positions(),{pos,width,height,bands,collectors}=layout,view=$("viewport"),ox=view.scrollLeft,oy=view.scrollTop;
+ const graph=$("graph"),spacer=$("spacer"),svg=$("lines"),root=$("nodes");
+ graph.style.width=width+"px";graph.style.height=height+"px";graph.style.transform="scale("+zoom+")";
+ graph.classList.toggle("show-all-links",showAllConnections);
+ spacer.style.width=Math.ceil(width*zoom)+"px";spacer.style.height=Math.ceil(height*zoom)+"px";
+ svg.setAttribute("viewBox","0 0 "+width+" "+height);svg.replaceChildren();root.replaceChildren();
+ for(const previous of graph.querySelectorAll(".track-band,.tree-stage-marker"))previous.remove();
+ const milestone=course.nodes.find(n=>n.id===course.course?.mastery_node_id);
+ const milestoneId=milestone?.id||null;
+ const lastTier=Math.max(...course.nodes.map(n=>n.tier));
+ const lastX=milestoneId?pos.get(milestoneId)?.x:width-60;
+ for(const band of bands){
+  const row=mk("div","track-band"+(band.shared?" shared":""));
+  row.style.left="23px";row.style.top=band.top+"px";row.style.width=Math.max(270,(lastX||width)-65)+"px";row.style.height=band.height+"px";
+  row.style.setProperty("--track-accent",band.color);
+  const title=mk("div","track-band-title",band.title);
+  const size=mk("span","track-band-count",band.count+" concepts");
+  row.append(title,size);graph.prepend(row);
+ }
+ const tierSet=[...new Set(course.nodes.map(n=>n.tier))].sort((a,b)=>a-b);
+ for(const tier of tierSet){
+  const starts=course.nodes.filter(n=>n.tier===tier).map(n=>pos.get(n.id)?.x).filter(Number.isFinite);
+  if(!starts.length)continue;
+  const title=mk("div","tree-stage-marker",(tier===lastTier?"FINAL MASTERY":"STAGE "+(tier+1)));
+  title.style.left=Math.min(...starts)+"px";title.style.top="85px";
+  graph.append(title);
+ }
+ function drawWire(from,to,classes,fromId,toId){
+  const d=linkPath(from,to);
+  for(const cls of ["wire-back "+classes,"wire "+classes]){
+   const p=document.createElementNS("http://www.w3.org/2000/svg","path");
+   p.setAttribute("d",d);p.setAttribute("class",cls);
+   p.dataset.from=fromId;p.dataset.to=toId;svg.append(p);
+  }
+ }
+ for(const node of course.nodes){
+  for(const parentId of node.prerequisites){
+   const a=pos.get(parentId),b=pos.get(node.id);
+   if(!a||!b)continue;
+   const isFinal=milestoneId===node.id&&collectors.length>0;
+   const classes=(isFinal?"mastery-link ":"")+(level(parentId)===5?"complete":unlocked(node)?"ready":"");
+   drawWire(a,b,classes,parentId,node.id);
+  }
+ }
+ for(const collector of collectors){
+  const end=pos.get(milestoneId);
+  const ready=collector.required.every(id=>level(id)===5);
+  drawWire({x:collector.x-8,y:collector.y-14},end,"collector-link "+(ready?"complete":"ready"),"collector:"+collector.id,milestoneId);
+  const mastered=collector.required.filter(id=>level(id)===5).length;
+  const gate=mk("button","track-collector"+(ready?" ready":""));
+  gate.type="button";gate.style.left=collector.x+"px";gate.style.top=collector.y+"px";
+  gate.style.setProperty("--track-accent",collector.color);gate.dataset.track=collector.id;
+  gate.title="Track readiness · "+collector.title+" · "+mastered+"/"+collector.required.length+" terminal requirements mastered. Not an additional learning step.";
+  gate.append(mk("strong",null,collector.title),mk("span",null,mastered+" / "+collector.required.length+" ready"));
+  gate.addEventListener("click",()=>modal(collector.title+" · Track Readiness",body=>{
+   body.append(mk("p",null,"This is a visual summary, not an extra lesson. The final mastery milestone still requires every original prerequisite. Complete these "+collector.required.length+" concepts:"));
+   for(const id of collector.required){
+    const n=get(id);if(n)body.append(btn((level(id)===5?"✓ ":"○ ")+n.title+" · "+level(id)+"/5",()=>{closeModal();open(id)},true));
+   }
+  }));
+  root.append(gate);
+ }
+ function focusLinks(nodeId){
+  const focused=!!nodeId;
+  graph.classList.toggle("focus-links",focused);
+  for(const p of svg.querySelectorAll("path")){
+   const incident=p.dataset.from===nodeId||p.dataset.to===nodeId;
+   const collectorId=collectors.find(c=>c.required.includes(nodeId))?.id;
+   const related=incident&&(p.dataset.to!==milestoneId||nodeId!==milestoneId||p.classList.contains("collector-link"))||
+    (collectorId&&p.dataset.from==="collector:"+collectorId);
+   p.classList.toggle("related",focused&&!!related);
+  }
+  for(const btn of root.querySelectorAll(".node"))btn.classList.toggle("linked",focused&&(btn.dataset.node===nodeId||get(nodeId)?.prerequisites.includes(btn.dataset.node)||get(btn.dataset.node)?.prerequisites.includes(nodeId)));
+  for(const gate of root.querySelectorAll(".track-collector"))gate.classList.toggle("linked",focused&&collectors.some(c=>c.id===gate.dataset.track&&c.required.includes(nodeId)));
+ }
+ for(const n of course.nodes){
+  const p=pos.get(n.id),st=state(n),v=level(n.id),b=mk("button","node "+st+(showNode(n)?"":" hide-filter"));
+  if(!p)continue;
+  b.type="button";b.style.left=p.x+"px";b.style.top=p.y+"px";b.dataset.node=n.id;
+  const band=bands.find(x=>x.id===p.group);b.style.setProperty("--track-accent",band?.color||"#caa760");
+  b.title=n.title+" · "+(st==="locked"?"Locked: finish all immediate prerequisites":v+" of 5 mastery checkpoints");
+  b.setAttribute("aria-label",b.title);
+  b.append(mk("span","node-icon",n.icon||"◈"));
+  const core=mk("span","node-core");core.append(mk("span","node-name",n.title));
+  const dots=mk("span","node-dots");for(let i=0;i<5;i++)dots.append(mk("span","node-dot"+(i<v?" filled":"")));
+  core.append(dots);b.append(core,mk("span","node-corner",st==="mastered"?"✓":st==="locked"?"🔒":v?v+"/5":""));
+  if(st==="mastered")b.append(mk("span","laurel","❧"));
+  b.addEventListener("mouseenter",()=>focusLinks(n.id));b.addEventListener("mouseleave",()=>focusLinks(null));
+  b.addEventListener("focus",()=>focusLinks(n.id));b.addEventListener("blur",()=>focusLinks(null));
+  b.addEventListener("click",()=>open(n.id));root.append(b);
+ }
+ treeGuide(layout);
+ view.scrollLeft=ox;view.scrollTop=oy;
 }
 function refresh(){
 filters();renderGraph();
@@ -199,9 +286,9 @@ if(view==="insights")modal("Insights",b=>{const mastered=course.nodes.filter(n=>
 }
 function setZoom(value){
 const v=$("viewport"),old=zoom,cx=v.scrollLeft+v.clientWidth/2,cy=v.scrollTop+v.clientHeight/2;
-zoom=Math.max(.5,Math.min(1.6,Math.round(value*100)/100));renderGraph();v.scrollLeft=cx*zoom/old-v.clientWidth/2;v.scrollTop=cy*zoom/old-v.clientHeight/2;$("zoomValue").textContent=Math.round(zoom*100)+"%";
+zoom=Math.max(.18,Math.min(1.6,Math.round(value*100)/100));renderGraph();v.scrollLeft=cx*zoom/old-v.clientWidth/2;v.scrollTop=cy*zoom/old-v.clientHeight/2;$("zoomValue").textContent=Math.round(zoom*100)+"%";
 }
-function fitTree(){const d=positions(),v=$("viewport");setZoom(Math.max(.5,Math.min(1.15,Math.min(v.clientWidth/d.width,v.clientHeight/d.height))));v.scrollLeft=0;v.scrollTop=0}
+function fitTree(){const d=positions(),v=$("viewport");setZoom(Math.max(.18,Math.min(1.15,Math.min(v.clientWidth/d.width,v.clientHeight/d.height))));v.scrollLeft=0;v.scrollTop=0}
 $("closePanel").addEventListener("click",closePanel);$("panelLayer").addEventListener("click",e=>{if(e.target===$("panelLayer"))closePanel()});
 $("closeModal").addEventListener("click",closeModal);$("modalLayer").addEventListener("click",e=>{if(e.target===$("modalLayer"))closeModal()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeModal();closePanel()}});
