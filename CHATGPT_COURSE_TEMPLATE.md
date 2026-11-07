@@ -111,6 +111,7 @@ BEFORE responding, compare your complete output to EXAMPLE_COMPLETE_COURSE.json:
 - Source references resolve to actual source IDs and locators; unsupported assumptions remain flagged.
 - The declared format is exactly sdggold-course-v2; package is immediately importable and no in-app AI work is required.
 - If you can execute a JSON parser, parse the entire result. If you can execute the project's deterministic course-package.js validator, run it on the finished file and correct all errors. Never claim code-based validation ran if you did not execute it.
+- When local command execution is available, use the exact repository CLI: node tools/validate-course.cjs SDGGold_YourCourse.json. For multipart results, give all files as arguments in one command. The command checks the same SDGGold v2 graph and five-phase contract used by the app. Also compare the output against COURSE_PACKAGE_SCHEMA.json. If this cannot be run, say so explicitly instead of declaring machine validation complete.
 - If you cannot verify factual correctness or complete coverage, disclose the limits honestly. Mark the coverage partial as necessary; don't silently invent material just to produce a neat result.
 
 ### LARGE DOCUMENTS, MULTI-FILE CORPORA AND CONTEXT LIMITS
