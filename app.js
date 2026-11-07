@@ -213,4 +213,11 @@ document.querySelectorAll(".checkline input").forEach(b=>b.addEventListener("cha
 $("treeOptions").addEventListener("click",options);$("zoomOut").addEventListener("click",()=>setZoom(zoom-.1));$("zoomIn").addEventListener("click",()=>setZoom(zoom+.1));$("zoomFit").addEventListener("click",fitTree);
 $("account").addEventListener("click",()=>modal("Local Learning Profile",b=>b.append(mk("p",null,"Progress is stored in this browser. Google login is planned but not active."))));
 $("notifications").addEventListener("click",()=>modal("Notifications",b=>b.append(mk("p",null,"No new notifications. Your next milestone is shown in the progress footer."))));
-validate(SAMPLE);refresh();requestAnimationFrame(()=>{if(innerWidth<1250)fitTree()});
+function sanitizeProgress(){
+  const previous=JSON.stringify(progress);
+  for(const n of [...course.nodes].sort((a,b)=>a.tier-b.tier)){
+    if(n.prerequisites.some(id=>level(id)!==5))delete progress[n.id];
+  }
+  if(previous!==JSON.stringify(progress))save();
+}
+validate(SAMPLE);sanitizeProgress();refresh();requestAnimationFrame(fitTree);
