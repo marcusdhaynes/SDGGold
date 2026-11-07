@@ -1,0 +1,42 @@
+<section class="ref-dialog" role="dialog" aria-modal="true" aria-labelledby="ref-dialog-title" aria-describedby="ref-dialog-description">
+  <header class="ref-dialog-head">
+    <div>
+      <span class="ref-overline">SDGGOLD · APP SETTINGS</span>
+      <h2 id="ref-dialog-title">Settings <span class="ref-gold">/ Templates &amp; Examples</span></h2>
+      <p id="ref-dialog-description">Everything external ChatGPT needs to build an SDGGold course correctly, available to read, copy, or save right here.</p>
+    </div>
+    <button type="button" id="ref-close" class="ref-close" aria-label="Close settings">✕</button>
+  </header>
+  <div class="ref-toolbar">
+    <div class="ref-toolbar-copy">
+      <button type="button" class="ref-gold-button" id="ref-copy-all" disabled>▤ Copy Everything</button>
+      <button type="button" class="ref-outline-button" id="ref-download-all" disabled>⇩ Download Complete Set</button>
+      <button type="button" class="ref-outline-button" id="ref-retry" hidden>↻ Retry Loading</button>
+    </div>
+    <span class="ref-readiness" id="ref-loaded-count">0 / 6 ready</span>
+  </div>
+  <p id="ref-status" role="status" aria-live="polite" class="ref-status">Preparing references…</p>
+  <div class="ref-content-layout">
+    <section class="ref-documents" aria-labelledby="ref-documents-title">
+      <h3 id="ref-documents-title">Resource Library</h3>
+      <div id="ref-list" class="ref-list"></div>
+    </section>
+    <section class="ref-reader" aria-labelledby="ref-reader-title">
+      <div class="ref-reader-top">
+        <div class="ref-reader-meta">
+          <span class="ref-reader-kind" id="ref-reader-kind">Template</span>
+          <h3 id="ref-reader-title">Master ChatGPT Template</h3>
+          <span class="ref-reader-name" id="ref-reader-name"></span>
+          <p id="ref-reader-description"></p>
+        </div>
+        <div class="ref-reader-actions">
+          <button type="button" class="ref-action ref-reader-copy" id="ref-reader-copy" disabled>Copy</button>
+          <button type="button" class="ref-action" id="ref-reader-download" disabled>Download</button>
+        </div>
+      </div>
+      <div id="ref-reader-scroll" class="ref-reader-scroll" tabindex="0" aria-label="Document content, scroll to read">
+        <pre id="ref-reader-content" class="ref-reader-content"></pre>
+      </div>
+    </section>
+  </div>
+</section>
