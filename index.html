@@ -10,6 +10,7 @@
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./graph-tracks.css">
+  <link rel="stylesheet" href="./layout-controls.css">
   <link rel="stylesheet" href="./architect.css">
   <link rel="stylesheet" href="./settings.css">
   <script src="./course-package.js" defer></script>
@@ -19,6 +20,7 @@
   <script src="./settings-reference.js" defer></script>
   <script src="./settings-ui.js" defer></script>
   <script src="./graph-layout.js" defer></script>
+  <script src="./tree-gestures.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
@@ -46,27 +48,31 @@
     </div>
   </header>
   <div class="workspace">
-    <aside class="sidebar" aria-label="Learning tree tools">
-      <div class="sidebar-title"><span class="glyph" aria-hidden="true">♧</span><div><strong>Learning Tree</strong><span>Explore the learning progression</span></div></div>
+    <aside class="sidebar" id="courseSidebar" aria-label="Learning tree tools">
+      <div class="sidebar-title"><span class="glyph" aria-hidden="true">♧</span><div><strong>Learning Tree</strong><span>Explore the learning progression</span></div><button type="button" class="sidebar-toggle" id="sidebarToggle" aria-label="Collapse sidebar" aria-controls="courseSidebar" aria-expanded="true" title="Collapse sidebar"><span aria-hidden="true">‹</span></button></div>
       <div class="rule"></div>
-      <button class="sidebutton active" data-section="all"><span class="glyph">♧</span>All Concepts <span class="chevron">›</span></button>
-      <button class="sidebutton" data-section="progress"><span class="glyph">☆</span>My Progress</button>
-      <button class="sidebutton" data-section="saved"><span class="glyph">♧</span>Saved</button>
-      <button class="sidebutton" data-section="recent"><span class="glyph">◷</span>Recently Studied</button>
+      <button class="sidebutton active" data-section="all"><span class="glyph">♧</span><span class="side-label">All Concepts</span> <span class="chevron">›</span></button>
+      <button class="sidebutton" data-section="progress"><span class="glyph">☆</span><span class="side-label">My Progress</span></button>
+      <button class="sidebutton" data-section="saved"><span class="glyph">♧</span><span class="side-label">Saved</span></button>
+      <button class="sidebutton" data-section="recent"><span class="glyph">◷</span><span class="side-label">Recently Studied</span></button>
       <div class="rule"></div>
       <div class="sideheading">FILTERS</div>
+      <button class="sidebar-compact-control" type="button" data-expand-control="search" aria-label="Expand sidebar to search concepts" title="Search concepts"><span aria-hidden="true">⌕</span></button>
       <label class="search"><span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="Search concepts..." autocomplete="off" aria-label="Search concepts"></label>
+      <button class="sidebar-compact-control" type="button" data-expand-control="subject" aria-label="Expand sidebar to filter by subjects" title="Subjects"><span aria-hidden="true">▤</span></button>
       <label class="select-wrap"><select id="subject" aria-label="Filter by subject"><option value="all">▤ All Subjects</option></select></label>
+      <button class="sidebar-compact-control" type="button" data-expand-control="level" aria-label="Expand sidebar to filter by stages" title="Stages"><span aria-hidden="true">▥</span></button>
       <label class="select-wrap"><select id="level" aria-label="Filter by level"><option value="all">▥ All Levels</option></select></label>
+      <button class="sidebar-compact-control" type="button" data-expand-control="type" aria-label="Expand sidebar to filter by concept types" title="Concept types"><span aria-hidden="true">☷</span></button>
       <label class="select-wrap"><select id="type" aria-label="Filter by type"><option value="all">☷ All Types</option><option value="concept">Concepts</option><option value="skill">Skills</option><option value="milestone">Milestones</option></select></label>
       <div class="rule"></div>
       <div class="sideheading">SHOW</div>
-      <label class="checkline"><input type="checkbox" data-state="available" checked><span id="count-available">Available</span></label>
-      <label class="checkline"><input type="checkbox" data-state="started" checked><span id="count-started">In Progress</span></label>
-      <label class="checkline"><input type="checkbox" data-state="mastered" checked><span id="count-mastered">Mastered</span></label>
-      <label class="checkline"><input type="checkbox" data-state="locked" checked><span id="count-locked">Locked</span></label>
+      <label class="checkline" title="Show Available concepts"><input type="checkbox" data-state="available" checked><span class="checkline-icon" aria-hidden="true">◉</span><span id="count-available">Available</span></label>
+      <label class="checkline" title="Show In Progress concepts"><input type="checkbox" data-state="started" checked><span class="checkline-icon" aria-hidden="true">◐</span><span id="count-started">In Progress</span></label>
+      <label class="checkline" title="Show Mastered concepts"><input type="checkbox" data-state="mastered" checked><span class="checkline-icon" aria-hidden="true">★</span><span id="count-mastered">Mastered</span></label>
+      <label class="checkline" title="Show Locked concepts"><input type="checkbox" data-state="locked" checked><span class="checkline-icon" aria-hidden="true">◇</span><span id="count-locked">Locked</span></label>
       <div class="side-spacer"></div>
-      <button class="optionbtn" id="treeOptions">⚙ &nbsp; Tree Options</button>
+      <button class="optionbtn" id="treeOptions" title="Tree Options"><span class="option-icon" aria-hidden="true">⚙</span><span class="option-label">Tree Options</span></button>
     </aside>
     <main class="stage" id="main">
       <section class="canvas-view" aria-label="Interactive progression tree">
@@ -82,7 +88,7 @@
           <output id="zoomValue">100%</output>
           <button id="zoomIn" title="Zoom in" aria-label="Zoom in">+</button>
         </div><button class="fitbtn" id="zoomFit" title="Fit tree to screen" aria-label="Fit tree to screen">⛶</button></div>
-        <div class="graph-viewport" id="viewport" tabindex="0" aria-label="Scrollable horizontal mastery tree">
+        <div class="graph-viewport" id="viewport" tabindex="0" aria-label="Learning progression canvas: wheel or pinch to zoom, drag to pan">
           <div class="graph-spacer" id="spacer"><div class="graph" id="graph">
             <svg id="lines" class="graph-lines" aria-hidden="true"></svg>
             <div id="nodes"></div>
