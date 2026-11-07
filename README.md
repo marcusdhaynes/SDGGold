@@ -13,6 +13,17 @@ The application performs **NO AI curriculum processing**. Your course content is
 - **Full valid multipart JSONL example:** [B001](EXAMPLE_BATCH_B001.jsonl) · [B002](EXAMPLE_BATCH_B002.jsonl) · [B003](EXAMPLE_BATCH_B003.jsonl). Import all three files at once or sequentially.
 - **[Import Studio operating guide](IMPORT_STUDIO_GUIDE.md)** — formatting, size limits, validation, Google sign-in, cloud saving, versioning, public sharing and setup.
 
+### Templates & Examples inside Settings
+
+Select the **⚙ Settings** icon in the app header (also accessible from **Tree Options → Settings · Templates & Examples**). The built-in reader contains:
+
+- The complete external ChatGPT master prompt.
+- The fully authored and validated single-file JSON example course.
+- All three actual JSONL batches illustrating large-course imports.
+- The formal machine-readable package schema.
+
+Choose **Copy Everything** to copy all six full files with clear `BEGIN FILE`/`END FILE` delimiters in one clipboard action. Each file also has **Open**, **Copy**, and **Download** controls, and can be read within the app without leaving the page. **Download Complete Set** saves all six as one text file. The references are included in SDGGold's offline application cache for use after the app has been installed and cached.
+
 ### How to use
 
 1. Copy/download the master ChatGPT template and the complete example. Give both to ChatGPT outside SDGGold, along with all course learning material you want analyzed.
