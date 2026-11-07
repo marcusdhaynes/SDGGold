@@ -27,7 +27,19 @@ async function fetchDownload(file,name,mime){
 }
 async function importedText(raw,name){
  if(String(raw).length>MAX_FILE)throw Error(name+" is larger than 25 MB. Split into smaller JSONL batches.");
- const p=V.parse(raw,name);parts.push({name,parsed:p});
+ const p=V.parse(raw,name);
+ // A complete package replaces a prior complete or unfinished attempt.
+ // Never accidentally mix two different course packages or retain a stale
+ // example in the pending JSONL batch collection.
+ if(p.mode==="package"){
+   if(parts.length&&!confirm("Replace the previously imported file(s) with "+name+"? Your existing saved Supabase courses will not change."))return;
+   parts=[{name,parsed:p}];
+ }else{
+   if(parts.some(item=>item.parsed?.mode==="package")){
+     throw Error("A complete course is already loaded. Choose Clear Pending Inputs before importing numbered JSONL batches.");
+   }
+   parts.push({name,parsed:p});
+ }
  try{
   const assembled=V.assembleParts(parts),r=V.audit(assembled);
   report=r;course=r.ok?assembled:null;cloudId=null;cloudVersion=null;editable=true;
@@ -204,7 +216,7 @@ function bind(){
  $("studio-template").onclick=()=>fetchDownload("CHATGPT_COURSE_TEMPLATE.md","SDGGold_Master_External_ChatGPT_Template.md","text/markdown").catch(e=>message(e.message,true));
  $("studio-example").onclick=()=>fetchDownload("EXAMPLE_COMPLETE_COURSE.json","SDGGold_Complete_Working_Example.json").catch(e=>message(e.message,true));
  $("studio-example-preview").onclick=importExample;
- $("studio-files").onchange=e=>importFiles(e.target.files);
+ $("studio-files").onchange=e=>{const chosen=[...e.target.files];e.target.value="";void importFiles(chosen)};
  const drop=$("studio-drop");
  for(const event of ["dragenter","dragover"])drop.addEventListener(event,e=>{e.preventDefault();drop.classList.add("dragging")});
  for(const event of ["dragleave","drop"])drop.addEventListener(event,e=>{e.preventDefault();drop.classList.remove("dragging")});
