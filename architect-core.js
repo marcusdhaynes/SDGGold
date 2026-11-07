@@ -142,12 +142,14 @@ function synthesizeGraph(concepts,relations=[],name="New Course"){
  const groups=new Map();
  for(const n of items){const v=groups.get(n.tier)||[];v.push(n);groups.set(n.tier,v)}
  const lanes=new Map();
+ const widest=Math.max(...[...groups.values()].map(g=>g.length));
+ const baseline=Math.max(3,1+(widest-1)*.65);
  for(const [t,group] of [...groups.entries()].sort((a,b)=>a[0]-b[0])){
   group.sort((a,b)=>{
    const anchor=n=>n.parents.length?n.parents.reduce((sum,p)=>sum+(lanes.get(p)||0),0)/n.parents.length:n.title.localeCompare("")/1000;
    return anchor(a)-anchor(b)||a.title.localeCompare(b.title);
   });
-  group.forEach((n,i)=>{lanes.set(n.id,i);n.lane=3+(i-(group.length-1)/2)*1.3});
+  group.forEach((n,i)=>{lanes.set(n.id,i);n.lane=baseline+(i-(group.length-1)/2)*1.3});
  }
  if(ends.length>1)issues.push({severity:"info",code:"terminal_synthesis",detail:"Added a final integration milestone joining "+ends.length+" terminal strands; confirm that synthesis is conceptually appropriate."});
  return {nodes:items,issues,edge_count:items.reduce((a,n)=>a+n.parents.length,0),paths:items.filter(n=>n.tier===0).length};
@@ -184,7 +186,9 @@ function audit(packetData,graph,course){
  if((packetData.batches||[]).some(b=>b.more_batches===true)&&!(packetData.batches||[]).some(b=>b.more_batches===false))issues.push({severity:"high",code:"incomplete_packets",detail:"The imported batch manifest indicates more material remains."});
  if((packetData.manifests||[]).some(m=>m.coverage_claim!=="complete"))issues.push({severity:"review",code:"partial_claim",detail:"At least one manifest declares incomplete source coverage."});
  const coverage=passages.length?Math.round(100*(passages.length-uncovered.length)/passages.length):0;
- return {sources:sources.length,passages:passages.length,concept_candidates:concepts.length,graph_nodes:graph?.nodes.length||0,coverage_percent:coverage,uncovered_passages:uncovered.map(x=>x.chunk_id),issues,high:issues.filter(i=>i.severity==="high").length,ready_for_publication:issues.every(i=>i.severity!=="high"&&i.severity!=="review")&&coverage===100};
+ const checksPassed=issues.every(i=>i.severity!=="high"&&i.severity!=="review")&&coverage===100;
+ issues.push({severity:"review",code:"human_verification_required",detail:"An automated audit cannot guarantee exhaustive source understanding, factual accuracy, fair assessment, or legal rights to publish. Human/source verification is required."});
+ return {sources:sources.length,passages:passages.length,concept_candidates:concepts.length,graph_nodes:graph?.nodes.length||0,coverage_percent:coverage,coverage_meaning:"Percentage of source passages referenced by at least one concept, not proof that every fact was extracted.",uncovered_passages:uncovered.map(x=>x.chunk_id),issues,high:issues.filter(i=>i.severity==="high").length,automated_checks_passed:checksPassed,ready_for_publication:false,review_status:"human_verification_required"};
 }
 return {MAX_NODES,MAX_CHARS,clean,slug,passagesFromText,packet,packetRecords,ingestPackets,addSource,normalizeCandidates,synthesizeGraph,buildCourse,audit,validatePacket:packetRecords};
 });
