@@ -52,9 +52,15 @@ async function aiRun(job,service,onChange=()=>{},stopped=()=>false){
     const data=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(r.error);r.readAsDataURL(asset.blob)});
     const inspected=await call("inspect_image",{image:data});
     const text=[inspected.transcription,inspected.description].filter(Boolean).join("\n\n");
-    if(text.trim())C.addSource(job.packet,asset.asset_id,text,"image_ocr","AI visual inspection");
-    const added=job.packet.passages.splice(0);
-    for(const p of added)await Store.savePassage(job.id,p);
+    if(text.trim()){
+     const linked=job.packet.sources.find(x=>x.title===asset.asset_id||asset.asset_id.startsWith(x.title+" page "));
+     const sid=linked?.source_id||"OCR-"+C.slug(asset.asset_id);
+     if(!linked)job.packet.sources.push({record_type:"source",source_id:sid,title:asset.asset_id,format:"image_ocr",rights:"unknown",trust:"user_supplied",available_locators:"image"});
+     const added=C.passagesFromText(text,sid,"AI visual inspection · "+asset.asset_id);
+     for(const p of added)await Store.savePassage(job.id,p);
+     job.input_chars=(job.input_chars||0)+text.length;
+     job.packet.gaps=job.packet.gaps.filter(g=>!(g.kind==="pending_scanned_page_ocr"&&asset.asset_id.includes(g.locator)));}
+
     for(const line of inspected.missing_or_unclear||[])job.packet.gaps.push({record_type:"gap",gap_id:"IMG-"+job.imageIndex+"-"+C.slug(line),source_id:asset.asset_id,locator:"image",severity:"review",kind:"unclear_visual",description:line});
     job.imageIndex++;await save(job);
    }
