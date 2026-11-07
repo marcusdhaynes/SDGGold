@@ -52,7 +52,7 @@ function listMine(offset=0){return request("list",{scope:"mine",offset,limit:50}
 function load(id){return request("get",{id})}
 function revisions(id){return request("revisions",{id},null,true)}
 function getRevision(id,version){return request("revision",{id,version},null,true)}
-function save(pack,visibility="private",expected_version=null){return request("save",{}, {package:pack,visibility,expected_version},true)}
+function save(pack,visibility="private",expected_version=null,publication_reviewed=false){return request("save",{}, {package:pack,visibility,expected_version,publication_reviewed},true)}
 function remove(id){return request("delete",{}, {id},true)}
 return {URL,getClient,session,subscribe,signIn,signOut,listPublic,listMine,load,revisions,getRevision,save,remove};
 });
