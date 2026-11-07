@@ -1,7 +1,7 @@
-const CACHE="sdggold-ui-v7";
+const CACHE="sdggold-ui-v8";
 const ASSETS=[
   "./","./index.html","./styles.css","./graph-tracks.css","./graph-layout.js","./layout-controls.css","./tree-gestures.js","./architect.css","./settings.css",
-  "./app.js","./course-package.js","./architect-store.js","./course-cloud.js","./course-studio.js",
+  "./app.js","./course-package.js","./architect-store.js","./course-cloud.js","./studio-copy-kit.js","./course-studio.js",
   "./settings-reference.js","./settings-ui.js","./settings-panel.html","./architect-panel.html",
   "./CHATGPT_COURSE_TEMPLATE.md","./EXAMPLE_COMPLETE_COURSE.json",
   "./EXAMPLE_BATCH_B001.jsonl","./EXAMPLE_BATCH_B002.jsonl","./EXAMPLE_BATCH_B003.jsonl",
