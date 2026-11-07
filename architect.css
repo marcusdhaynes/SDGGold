@@ -91,3 +91,39 @@
  .architect-card .architect-drop strong{font-size:16px}
  .architect-card .architect-drop small{font-size:11px}
 }
+
+/* Import Studio · three source actions plus one-click plain-text bundle. */
+.architect-card:has(.studio-instruction-actions){container-type:inline-size}
+.studio-instruction-actions{
+  display:grid;
+  grid-template-columns:minmax(0,1.6fr) minmax(0,1.4fr) minmax(0,.95fr) minmax(90px,.65fr);
+  gap:8px;
+  align-items:stretch;
+  width:100%;
+}
+.studio-instruction-actions .architect-btn{
+  display:flex;align-items:center;justify-content:center;
+  width:100%;min-width:0;margin:0;
+  padding:10px 8px;
+  text-align:center;
+  font-size:clamp(11px,1.1vw,13px);
+  line-height:1.3;
+  white-space:normal;
+}
+.studio-instruction-actions .studio-copy-all{font-weight:800;white-space:nowrap}
+.studio-copy-feedback{
+  margin:4px 0 8px;
+  font-size:12px;
+  font-weight:650;
+  line-height:1.45;
+  color:#476b55;
+}
+.studio-copy-feedback:empty{display:none}
+.studio-copy-feedback[data-error="true"]{color:#a04437}
+@container (max-width:670px){
+ .studio-instruction-actions{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .studio-instruction-actions .architect-btn{min-height:43px;font-size:12px}
+}
+@container (max-width:330px){
+ .studio-instruction-actions{grid-template-columns:1fr}
+}
