@@ -106,6 +106,7 @@ function audit(p){
  metrics.roots=roots.length;metrics.splits=[...children.values()].filter(a=>a.length>1).length;
  if(!roots.length)err("no_foundations","Tree has no foundation starting points.");
  const terminals=[...nodes.keys()].filter(id=>children.get(id)?.length===0);
+ metrics.mastery_nodes=terminals.filter(id=>id===c?.mastery_node_id&&nodes.get(id)?.kind==="milestone").length;
  if(terminals.length!==1||terminals[0]!==c?.mastery_node_id)err("mastery_terminal","Every path must lead to exactly one declared mastery node, not several terminal strands.");
  const final=nodes.get(c?.mastery_node_id);
  if(!final||final.kind!=="milestone")err("mastery_kind","Final mastery node must be a milestone.");
