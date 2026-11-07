@@ -1,0 +1,36 @@
+<div class="architect-hero">
+ <div><div class="architect-eyebrow">SDGGOLD · INTELLIGENT COURSE ENGINE</div><h1>AI Curriculum Architect <span style="color:#c2964f">✦</span></h1><p>Transform extensive, disorganized learning materials into the smallest logically complete progression tree. Every claim remains traceable, every required path stays connected, and every concept receives five mastery checkpoints.</p></div>
+ <div class="architect-pills"><span id="arch-auth-badge" class="architect-badge warn">Not signed in</span><span class="architect-badge">Private until you publish</span></div>
+</div>
+<div class="architect-flow">
+ <div class="architect-step"><span>01 · INTAKE</span><strong>Import Anything</strong><small>Books, notes, documents, packets and images</small></div>
+ <div class="architect-step"><span>02 · UNDERSTAND</span><strong>Find Foundations</strong><small>Extract, normalize, deduplicate, cite</small></div>
+ <div class="architect-step"><span>03 · STRUCTURE</span><strong>Build the Tree</strong><small>Optimize branches, merges and prerequisites</small></div>
+ <div class="architect-step"><span>04 · MASTER</span><strong>Author & Audit</strong><small>Five checkpoints and coverage review</small></div>
+</div>
+<div class="architect-grid">
+ <section class="architect-card">
+  <h2>Course Intake</h2><p>Combine multiple input methods in one project. Large text is chunked and locally checkpointed so interrupted processing can resume without starting over.</p>
+  <label class="architect-label" for="arch-title">Course name</label><input class="architect-field" id="arch-title" maxlength="150" placeholder="e.g. Comprehensive Biology">
+  <div class="architect-actions"><button class="architect-btn soft" id="arch-new">＋ New Course</button><button class="architect-btn soft" id="arch-template">▤ Preprocessing Template</button><button class="architect-btn soft" id="arch-export-packet">⇩ Export Packet</button></div>
+  <label class="architect-drop" id="arch-drop" for="arch-files"><span class="glyph">⇪</span><strong>Drop course materials here</strong><small>Multiple files or folders: PDF, Word, PowerPoint, Excel, EPUB, ZIP, text, Markdown, HTML, CSV, JSONL and images. Scanned pages and recordings may require external preprocessing.</small><input id="arch-files" type="file" multiple accept=".txt,.md,.markdown,.json,.jsonl,.ndjson,.pdf,.docx,.pptx,.xlsx,.odt,.epub,.zip,.csv,.tsv,.srt,.vtt,.html,.htm,.xml,.rtf,.tex,.png,.jpg,.jpeg,.webp,.log,.yaml,.yml,.mp3,.m4a,.mp4,.wav,.mov,.webm"></label>
+  <div class="architect-actions"><button class="architect-btn soft" id="arch-folder">▤ Select Folder</button></div>
+  <label class="architect-label" for="arch-paste">Paste notes, excerpts or preprocessor JSONL</label><textarea class="architect-textarea" id="arch-paste" placeholder="Paste your raw notes or JSONL records here."></textarea>
+  <div class="architect-actions"><button class="architect-btn soft" id="arch-add-text">＋ Add Text</button><button class="architect-btn soft" id="arch-add-packet">＋ Import JSONL Records</button></div>
+  <label class="architect-label" for="arch-web">Website URL (if direct extraction is permitted)</label><input class="architect-field" id="arch-web" type="url" placeholder="https://example.edu/lecture">
+  <div class="architect-actions"><button class="architect-btn soft" id="arch-add-web">＋ Import Webpage</button></div>
+  <div class="architect-notice">Unfetched links, unreadable scans, untranscribed media, missing citations and uncertainty are recorded as visible gaps—not silently treated as processed.</div>
+  <div class="architect-divider"></div><h3>Curriculum priorities</h3><div class="architect-pills"><span class="architect-badge">Child-first foundations</span><span class="architect-badge">Fewest necessary branches</span><span class="architect-badge">Every prerequisite enforced</span><span class="architect-badge">Comprehensive coverage</span></div>
+  <div class="architect-actions" style="margin-top:18px"><button class="architect-btn" id="arch-generate">✦ Generate with AI</button><button class="architect-btn alt" id="arch-draft">◇ Build Local Draft</button><button class="architect-btn danger" id="arch-pause" disabled>Pause</button></div>
+  <div class="architect-progress"><div id="arch-progress"></div></div><p id="arch-work-label">No processing started</p><div class="architect-status" id="arch-message" role="status">Import course material and choose AI processing. Documents stay local until an authenticated request is initiated.</div>
+ </section>
+ <aside style="display:flex;flex-direction:column;gap:18px;min-width:0">
+  <section class="architect-card"><h2>AI Connection</h2><p>AI analysis requires Google sign-in and a private server-side API key. The secret never appears in the public web app.</p><div class="architect-actions"><button class="architect-btn alt" id="arch-login">Sign In With Google</button><button class="architect-btn soft" id="arch-logout" hidden>Sign Out</button></div><p id="arch-auth-detail">Not connected. Preprocessed packets and local drafts are available without AI calls.</p></section>
+  <section class="architect-card"><h2>Processing Dashboard</h2><div class="architect-statrow"><div class="architect-stat"><strong id="arch-sources">0</strong><small>Sources</small></div><div class="architect-stat"><strong id="arch-passages">0</strong><small>Passages</small></div><div class="architect-stat"><strong id="arch-concepts">0</strong><small>Concepts</small></div></div>
+    <div><strong id="arch-phase" style="font:700 16px Georgia,serif">Collect</strong><span id="arch-calls" style="float:right;font-size:11px;color:#64717b">0 AI calls</span></div><p id="arch-count-summary">No course selected</p>
+    <div class="architect-actions"><button class="architect-btn" id="arch-apply" disabled>↗ Use in Learning Tree</button><button class="architect-btn soft" id="arch-download" disabled>⇩ Course JSON</button><button class="architect-btn soft" id="arch-audit-export" disabled>⇩ Audit Report</button></div>
+  </section>
+  <section class="architect-card"><h2>Curriculum Quality Report</h2><p id="arch-quality">Validation results appear here after a course is generated.</p><ul class="architect-issues" id="arch-issues"></ul></section>
+  <section class="architect-card"><h2>Local Projects</h2><p>Return to a previous project at its saved checkpoint.</p><div class="architect-joblist" id="arch-jobs"></div><div class="architect-actions"><button class="architect-btn danger" id="arch-delete">Delete Selected Project</button></div></section>
+ </aside>
+</div>
