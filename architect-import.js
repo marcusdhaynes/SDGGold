@@ -120,12 +120,64 @@ function stripMarkup(text,type){
  if(type==="rtf")return text.replace(/\\par[d]?/g,"\n").replace(/\\'[0-9a-f]{2}/gi," ").replace(/\\[a-z]+-?\d* ?/gi,"").replace(/[{}]/g,"");
  return text;
 }
+async function streamLargeText(job,file,name,type,onProgress){
+ const sourceId="SRC-"+C.slug(name)+"-"+Date.now().toString(36);
+ job.packet.sources.push({record_type:"source",source_id:sourceId,title:name,format:type,author:"unknown",version:"unknown",uri:"user_upload",rights:"unknown",trust:"user_supplied",available_locators:"streamed source",missing_locators:"none"});
+ const reader=file.stream().getReader(),decoder=new TextDecoder(),target=6200,overlap=180;
+ let buffer="",offset=0,index=1,complete=false;
+ try{
+  while(!complete){
+   const result=await reader.read();complete=result.done;
+   buffer+=complete?decoder.decode():decoder.decode(result.value,{stream:true});
+   while(buffer.length>target||(complete&&buffer.length)){
+    const size=Math.min(buffer.length,target);
+    const chunk=buffer.slice(0,size);
+    if(chunk.trim()){
+     const id=sourceId+"-P"+String(index).padStart(5,"0");
+     await Store.savePassage(job.id,{record_type:"passage",chunk_id:id,source_id:sourceId,locator:"characters "+(offset+1)+"–"+(offset+size),text:chunk,coverage:"direct_text",confidence:"high"});
+     index++;
+    }
+    if(size===buffer.length){buffer="";offset+=size;break}
+    buffer=buffer.slice(size-overlap);offset+=size-overlap;
+   }
+   if(onProgress&&index%80===0)onProgress(name+" · "+index+" chunks checkpointed");
+  }
+ }finally{reader.releaseLock()}
+ job.input_chars=(job.input_chars||0)+offset;
+}
+async function streamJSONL(job,file,name,onProgress){
+ const reader=file.stream().getReader(),decoder=new TextDecoder();
+ let buffer="",line=0,records=[];
+ async function flush(){if(records.length){await addRecords(job,records,name+" · through line "+line);records=[]}}
+ try{
+  while(true){
+   const r=await reader.read();buffer+=r.done?decoder.decode():decoder.decode(r.value,{stream:true});
+   let n;
+   while((n=buffer.indexOf("\n"))!==-1){
+    const raw=buffer.slice(0,n).trim();buffer=buffer.slice(n+1);line++;
+    if(raw){
+     let record;try{record=JSON.parse(raw)}catch(e){throw Error(name+" JSONL line "+line+": "+e.message)}
+     records.push(record);
+    }
+    if(records.length>=40){await flush();if(onProgress)onProgress(name+" · processed "+line+" records")}
+   }
+   if(buffer.length>3000000)throw Error("One JSONL record exceeds the 3MB safety limit.");
+   if(r.done)break;
+  }
+  if(buffer.trim()){line++;records.push(JSON.parse(buffer.trim()))}
+  await flush();
+ }finally{reader.releaseLock()}
+}
 async function addFile(job,file,onProgress=()=>{}){
  const name=safeLabel(file.name),type=ext(name);
  onProgress("Reading "+name);
  if(file.size>200000000){gap(job,name,"File exceeds 200 MB. Split or preprocess externally.","file_size_limit");return}
  if(type==="jsonl"||type==="ndjson"){
-  try{await addRecords(job,C.packetRecords(await file.text(),name),name);return}catch(e){gap(job,name,"Invalid preprocessing JSONL: "+e.message,"invalid_packet");return}
+  try{
+   if(file.size>6000000)await streamJSONL(job,file,name,onProgress);
+   else await addRecords(job,C.packetRecords(await file.text(),name),name);
+   return;
+  }catch(e){gap(job,name,"Invalid preprocessing JSONL: "+e.message,"invalid_packet");return}
  }
  if(type==="json"){
   const text=await file.text();
@@ -137,6 +189,9 @@ async function addFile(job,file,onProgress=()=>{}){
   await addText(job,name,text,"json");return;
  }
  if(SUPPORTED_TEXT.has(type)){
+  if(file.size>6000000&&["txt","md","markdown","csv","tsv","srt","vtt","log","yaml","yml","tex"].includes(type)){
+   await streamLargeText(job,file,name,type,onProgress);return;
+  }
   const raw=await file.text();await addText(job,name,stripMarkup(raw,type),type);return;
  }
  if(type==="pdf"){await pdfFile(job,file,onProgress);return}
