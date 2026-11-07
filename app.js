@@ -222,7 +222,9 @@ function sanitizeProgress(){
   }
   if(previous!==JSON.stringify(progress))save();
 }
-window.SDGGoldAcceptCourse=function(candidate){
+let activeCourseImportStarted=false;
+window.SDGGoldAcceptCourse=async function(candidate){
+  activeCourseImportStarted=true;
   if(candidate?.schema==="sdggold-course-v2"){
     const audit=window.SDGCoursePackage?.audit(candidate);
     if(!audit?.ok)throw Error("Course fails strict v2 validation ("+(audit?.errors.length||0)+" errors).");
@@ -244,14 +246,36 @@ window.SDGGoldAcceptCourse=function(candidate){
       }
     }
   }
+  // Large course volumes belong in IndexedDB; localStorage alone is too small for books.
+  try{
+    await window.SDGArchitectStore.put("jobs",{id:"active-course-v2",title:next.title,package:next,updated:new Date().toISOString()});
+    localStorage.removeItem(COURSE_STORE);
+  }catch(e){
+    const serial=JSON.stringify(next);
+    if(serial.length>2000000)throw Error("Browser storage cannot hold this large course. Enable IndexedDB or free browser storage and retry.");
+    localStorage.setItem(COURSE_STORE,serial);
+  }
   course=next;progress=accepted;
   saved=saved.filter(id=>next.nodes.some(n=>n.id===id));
   recent=recent.filter(id=>next.nodes.some(n=>n.id===id));
-  sanitizeProgress();
-  localStorage.setItem(COURSE_STORE,JSON.stringify(next));save();
+  sanitizeProgress();save();
   section="all";$("search").value="";
   refresh();requestAnimationFrame(fitTree);
 };
+async function restoreLargeCourse(){
+  try{
+    const entry=await window.SDGArchitectStore?.get("jobs","active-course-v2");
+    if(!entry?.package||activeCourseImportStarted)return;
+    const candidate=entry.package;
+    if(candidate.schema==="sdggold-course-v2"&&!window.SDGCoursePackage?.audit(candidate).ok)return;
+    validate(candidate);
+    course=candidate;
+    const cached=stored(STORE);
+    progress=cached?.title===candidate.title?cached.levels||{}:{};
+    sanitizeProgress();refresh();requestAnimationFrame(fitTree);
+  }catch(e){console.warn("IndexedDB course restoration unavailable",e)}
+}
 validate(SAMPLE);sanitizeProgress();refresh();requestAnimationFrame(fitTree);
+void restoreLargeCourse();
 if(new URLSearchParams(location.search).has("course"))requestAnimationFrame(()=>nav("studio"));
 if("serviceWorker" in navigator&&location.protocol==="https:"){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js",{scope:"./"}).catch(e=>console.warn("Offline installation unavailable",e)))}
