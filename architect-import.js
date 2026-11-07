@@ -44,7 +44,20 @@ async function pdfFile(job,file,onProgress){
    const page=await pdf.getPage(pageIndex);
    const items=await page.getTextContent();
    const text=(items.items||[]).map(x=>x.str||"").join(" ").trim();
-   if(text.length<20)gap(job,file.name+" page "+pageIndex,"No usable PDF text; scanned content may require OCR.","unreadable_pdf_page");
+   if(text.length<20){
+    try{
+     const original=page.getViewport({scale:1}),scale=Math.min(1.6,1400/Math.max(original.width,original.height));
+     const viewport=page.getViewport({scale}),canvas=document.createElement("canvas");
+     canvas.width=Math.ceil(viewport.width);canvas.height=Math.ceil(viewport.height);
+     const context=canvas.getContext("2d",{alpha:false});
+     await page.render({canvasContext:context,viewport}).promise;
+     const blob=await new Promise(resolve=>canvas.toBlob(resolve,"image/jpeg",.76));
+     if(blob&&blob.size<=2800000){
+      await Store.saveAsset(job.id,file.name+" page "+pageIndex+".jpg",blob);
+      job.packet.gaps.push({record_type:"gap",gap_id:"PENDING-"+sourceId+"-"+pageIndex,source_id:sourceId,locator:"page "+pageIndex,severity:"review",kind:"pending_scanned_page_ocr",description:"Scanned PDF page queued for visual AI inspection. Do not count as covered until OCR succeeds."});
+     }else gap(job,file.name+" page "+pageIndex,"Could not prepare this scanned page for OCR.","unreadable_pdf_page");
+    }catch(e){gap(job,file.name+" page "+pageIndex,"Scanned-page rendering failed: "+e.message,"unreadable_pdf_page")}
+   }
    else{
     const parts=C.passagesFromText(text,sourceId,"page "+pageIndex);
     for(const part of parts)await Store.savePassage(job.id,part);
@@ -52,6 +65,7 @@ async function pdfFile(job,file,onProgress){
    }
    if(onProgress&&pageIndex%10===0)onProgress(file.name+" · page "+pageIndex+"/"+pdf.numPages);
   }
+   job.packet.gaps.push({record_type:"gap",gap_id:"PDF-VISUAL-"+sourceId,source_id:sourceId,locator:"PDF figures",severity:"review",kind:"figure_review",description:"Text was extracted from the PDF; diagrams, formulas and charts may still require visual review."});
  }finally{if(pdf)await pdf.destroy()}
 }
 async function officeFile(job,file,format,onProgress){
