@@ -10,10 +10,13 @@
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./architect.css">
+  <link rel="stylesheet" href="./settings.css">
   <script src="./course-package.js" defer></script>
   <script src="./architect-store.js" defer></script>
   <script src="./course-cloud.js" defer></script>
   <script src="./course-studio.js" defer></script>
+  <script src="./settings-reference.js" defer></script>
+  <script src="./settings-ui.js" defer></script>
   <script src="./app.js" defer></script>
 </head>
 <body>
@@ -33,6 +36,7 @@
       <button class="navbtn" data-view="insights"><span class="glyph" aria-hidden="true">▥</span><span class="txt">Insights</span></button>
     </nav>
     <div class="toptools">
+      <button id="settingsButton" aria-label="Settings: Templates and Examples" title="Settings · Templates &amp; Examples" aria-haspopup="dialog" type="button">⚙</button>
       <button id="notifications" aria-label="Announcements" title="Announcements">♧</button>
       <button class="user-btn" id="account" aria-label="Local profile and settings" title="Local profile">
         <span class="user-circle">♙</span><span style="font-size:13px">⌄</span>
